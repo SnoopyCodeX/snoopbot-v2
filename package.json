@@ -1,0 +1,30 @@
+{
+  "name": "snoopbot-v2",
+  "version": "0.0.1",
+  "description": "A facebook chatbot made using NodeJS and Unofficial Facebook Chat API",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx rimraf ./build && tsc",
+    "start": "npm run build && node build/index.js"
+  },
+  "keywords": [
+    "chatbot",
+    "facebook-chat-bot",
+    "nodejs",
+    "facebook-chat-api"
+  ],
+  "author": "SnoopyCodeX",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "rimraf": "^5.0.5",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "dotenv": "^16.3.1",
+    "fca-unofficial": "^1.3.10"
+  }
+}

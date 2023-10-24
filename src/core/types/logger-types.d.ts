@@ -1,0 +1,1 @@
+type LoggerType = "muted" | "success" | "error"

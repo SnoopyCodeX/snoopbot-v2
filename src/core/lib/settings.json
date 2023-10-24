@@ -1,0 +1,8 @@
+{
+    "defaultSettings": {
+        "prefix": "/",
+        "antiUnsendEnabled": false,
+        "autoGreetEnabled": true
+    },
+    "threads": {}
+}
