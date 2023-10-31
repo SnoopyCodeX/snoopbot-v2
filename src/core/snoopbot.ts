@@ -5,6 +5,9 @@ import Settings from "./settings"
 import Logger from "./utils/logger"
 import Command from "./command"
 import Queue from "./queue"
+import Authenticator from "./auth/authenticator"
+import { readFileSync } from "fs"
+import SnoopBotEvent from "./event"
 
 const login = require('fca-unofficial')
 dotenv.config()
@@ -13,7 +16,6 @@ export default class SnoopBot {
     private commands: Array<Command> = []
     private events: SnoopBotThreadEvent = {}
     private commandMiddlewares: Array<Function> = []
-    private appstate: String = '[]'
     private queue: Queue = new Queue(1, "GlobalQueue")
 
     private options: SnoopBotOptions = {
@@ -43,9 +45,7 @@ export default class SnoopBot {
      * and loads facebook appstate from
      * environment variables
      */
-    public constructor() {
-        this.appstate = process.env.APPSTATE ?? '[]'
-    }
+    public constructor() {}
 
     /**
      * Adds new command that SnoopBot will
@@ -100,128 +100,135 @@ export default class SnoopBot {
 
         try {
             Logger.muted('Logging in...')
+            
+            Authenticator.authenticate().then(() => {
+                const cookie = Buffer.from(
+                    readFileSync(`${process.cwd()}/state.session`, "utf-8"),
+                    "base64"
+                ).toString("utf-8");
 
-            login({ appState: JSON.parse(this.appstate.toString()) }, (error: any, api: any) => {
-                if(error) return Logger.error(`Failed to login, please check the provided credentials.`)
+                login({ appState: JSON.parse(cookie) }, (error: any, api: any) => {
+                    if(error) return Logger.error(`Failed to login, please check the provided credentials.`)
+    
+                    Logger.muted('Logged in successfully...')
+                    Logger.success('I am up and running!🚀')
+    
+                    let settings = Settings.getSettings()
+                    let prefix = settings.defaultSettings.prefix
+    
+                    api.setOptions({
+                        listenEvents: this.options.listenEvents,
+                        selfListen: this.options.selfListen
+                    })
+    
+                    Logger.muted('Listening for messages...')
+    
+                    api.listen(async (error: any, event: any) => {
+                        if(error) return Logger.error(`Listening failed, cause: ${error}`)
 
-                Logger.muted('Logged in successfully...')
-                Logger.success('I am up and running!🚀')
-
-                let settings = Settings.getSettings()
-                let prefix = settings.defaultSettings.prefix
-
-                api.setOptions({
-                    listenEvents: this.options.listenEvents,
-                    selfListen: this.options.selfListen
-                })
-
-                Logger.muted('Listening for messages...')
-
-                api.listen(async (error: any, event: any) => {
-                    if(error) return Logger.error(`Listening failed, cause: ${error}`)
-
-                    process.env.APPSTATE = JSON.stringify(api.getAppState())
-
-                    if(event.type === 'event') {
-                        let thread = await api.getThreadInfo(event.threadID)
-                        let eventType = event.logMessageType
-
-                        switch(eventType) {
-                            // Member joined a group chat
-                            case 'log:subscribe':
-                                // Do nothing if the thread isn't a group chat
-                                if(!thread.isGroup) break
-
-                                // Execute the callback if it exists in the events array
-                                if(this.events['gc:member_join'] !== undefined)
-                                    this.queue.enqueue(async() => await this.events['gc:member_join'].onEvent(event, api))
-                            break
-
-                            // Member left a group chat
-                            case 'log:unsubscribe':
-                                // Do nothing if the thread isn't a group chat
-                                if(!thread.isGroup) break
-
-                                // Execute the callback if it exists in the events array
-                                if(this.events['gc:member_leave'] !== undefined)
-                                    this.queue.enqueue(async() => await this.events['gc:member_leave'].onEvent(event, api))
-                            break
-
-                            // A group chat changed name
-                            case 'log:thread-name':
-                                // Do nothing if the thread isn't a group chat
-                                if(!thread.isGroup) break
-
-                                // Execute the callback if it exists in the events array
-                                if(this.events['gc:change_name'] !== undefined)
-                                    this.queue.enqueue(async() => await this.events['gc:change_name'].onEvent(event, api))
-                            break
-                            
-                            // A group chat changed icon
-                            case 'log:thread-icon':
-                                // Do nothing if the thread isn't a group chat
-                                if(!thread.isGroup) break
-
-                                // Execute the callback if it exists in the events array
-                                if(this.events['gc:change_icon'] !== undefined)
-                                    this.queue.enqueue(async() => await this.events['gc:change_icon'].onEvent(event, api))
-                            break
-
-                            // A group chat changed theme
-                            case 'log:thread-color':
-                                // Do nothing if the thread isn't a group chat
-                                if(!thread.isGroup) break
-
-                                // Execute the callback if it exists in the events array
-                                if(this.events['gc:change_theme'] !== undefined)
-                                    this.queue.enqueue(async() => await this.events['gc:change_theme'].onEvent(event, api))
-                            break
-
-                            // A user changed nickname
-                            case 'log:user-nickname':
-                                // Execute the callback if it exists in the events array
-                                if(this.events['user:change_nickname'] !== undefined)
-                                    this.queue.enqueue(async() => await this.events['user:change_nickname'].onEvent(event, api))
-                            break
-                        }
-                    }
-
-                    settings = Settings.getSettings()
-                    const threadSettings = settings.threads[event.threadID] || settings.defaultSettings
-                    prefix = threadSettings.prefix
-
-                    this.commands.forEach((command) => {
-                        if((getType(command.execute) === 'Function' || getType(command.execute) === 'AsyncFunction') && event.body !== undefined) {
-                            const _prefix_ = event.body.substring(0, prefix.length)
-
-                            if(command.options.params === undefined)
-                                return Logger.error('No commands added, please add at least 1 command')
-
-                            const commandPrefix = command.options.prefix || prefix
-                            let commandBody = event.body.substring(prefix.length).replace(/\n/g, " ")
-
-                            const regexp = new RegExp(command.options.params.toString(), "gim")
-                            const matches = multilineRegex(regexp, commandBody)
-                            const handleMatches = command.options.handleMatches === undefined
-                                ? options.handleMatches === undefined
-                                    ? false
-                                    : options.handleMatches
-                                : command.options.handleMatches
-
-                            if((commandPrefix == _prefix_ && matches.length !== 0) || handleMatches) {
-                                let extras = {
-                                    ...command.options,
-                                    commands: this.getCommandsOptions(),
-                                    global
-                                }
-
-                                const commandCallback = () => async(matches: Array<any>, event: any, api: any, extras: any) => command.execute(matches, event, api, extras)
-                                this.queue.enqueue(async () => await pipeline([...this.commandMiddlewares, commandCallback], matches, event, api, extras))
+                        Logger.muted(`Event received: ${JSON.stringify(event)}`)
+    
+                        if(event.type === 'event') {
+                            let thread = await api.getThreadInfo(event.threadID)
+                            let eventType = event.logMessageType
+    
+                            switch(eventType) {
+                                // Member joined a group chat
+                                case 'log:subscribe':
+                                    // Do nothing if the thread isn't a group chat
+                                    if(!thread.isGroup) break
+    
+                                    // Execute the callback if it exists in the events array
+                                    if(this.events['gc:member_join'] !== undefined)
+                                        this.queue.enqueue(async() => await this.events['gc:member_join'].onEvent(event, api))
+                                break
+    
+                                // Member left a group chat
+                                case 'log:unsubscribe':
+                                    // Do nothing if the thread isn't a group chat
+                                    if(!thread.isGroup) break
+    
+                                    // Execute the callback if it exists in the events array
+                                    if(this.events['gc:member_leave'] !== undefined)
+                                        this.queue.enqueue(async() => await this.events['gc:member_leave'].onEvent(event, api))
+                                break
+    
+                                // A group chat changed name
+                                case 'log:thread-name':
+                                    // Do nothing if the thread isn't a group chat
+                                    if(!thread.isGroup) break
+    
+                                    // Execute the callback if it exists in the events array
+                                    if(this.events['gc:change_name'] !== undefined)
+                                        this.queue.enqueue(async() => await this.events['gc:change_name'].onEvent(event, api))
+                                break
+                                
+                                // A group chat changed icon
+                                case 'log:thread-icon':
+                                    // Do nothing if the thread isn't a group chat
+                                    if(!thread.isGroup) break
+    
+                                    // Execute the callback if it exists in the events array
+                                    if(this.events['gc:change_icon'] !== undefined)
+                                        this.queue.enqueue(async() => await this.events['gc:change_icon'].onEvent(event, api))
+                                break
+    
+                                // A group chat changed theme
+                                case 'log:thread-color':
+                                    // Do nothing if the thread isn't a group chat
+                                    if(!thread.isGroup) break
+    
+                                    // Execute the callback if it exists in the events array
+                                    if(this.events['gc:change_theme'] !== undefined)
+                                        this.queue.enqueue(async() => await this.events['gc:change_theme'].onEvent(event, api))
+                                break
+    
+                                // A user changed nickname
+                                case 'log:user-nickname':
+                                    // Execute the callback if it exists in the events array
+                                    if(this.events['user:change_nickname'] !== undefined)
+                                        this.queue.enqueue(async() => await this.events['user:change_nickname'].onEvent(event, api))
+                                break
                             }
                         }
+    
+                        settings = Settings.getSettings()
+                        const threadSettings = settings.threads[event.threadID] || settings.defaultSettings
+                        prefix = threadSettings.prefix
+    
+                        this.commands.forEach((command) => {
+                            if((getType(command.execute) === 'Function' || getType(command.execute) === 'AsyncFunction') && event.body !== undefined) {
+                                const _prefix_ = event.body.substring(0, prefix.length)
+    
+                                if(command.options.params === undefined)
+                                    return Logger.error('No commands added, please add at least 1 command')
+    
+                                const commandPrefix = command.options.prefix || prefix
+                                let commandBody = event.body.substring(prefix.length).replace(/\n/g, " ")
+    
+                                const regexp = new RegExp(command.options.params.toString(), "gim")
+                                const matches = multilineRegex(regexp, commandBody)
+                                const handleMatches = command.options.handleMatches === undefined
+                                    ? options.handleMatches === undefined
+                                        ? false
+                                        : options.handleMatches
+                                    : command.options.handleMatches
+    
+                                if((commandPrefix == _prefix_ && matches.length !== 0) || handleMatches) {
+                                    let extras = {
+                                        ...command.options,
+                                        commands: this.getCommandsOptions(),
+                                        global
+                                    }
+    
+                                    const commandCallback = () => async(matches: Array<any>, event: any, api: any, extras: any) => command.execute(matches, event, api, extras)
+                                    this.queue.enqueue(async () => await pipeline([...this.commandMiddlewares, commandCallback], matches, event, api, extras))
+                                }
+                            }
+                        })
                     })
                 })
-            })
+            });
         } catch(exception: any) {
             Logger.error(`${exception}`)
         }
