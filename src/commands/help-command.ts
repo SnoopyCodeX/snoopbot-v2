@@ -18,7 +18,7 @@ class HelpCommand extends SnoopBotCommand {
         const prefix = threadSettings.prefix
 
         let message = "📋 Available Commands\n\n"
-        message += `⟩ Prefix: ${prefix}`
+        message += `⟩ Prefix: ${prefix}\n\n`
 
         extras.commands.sort((a:SnoopBotCommandOptions, b:SnoopBotCommandOptions) => a.name! > b.name! ? 1 : -1)
 
