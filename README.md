@@ -1,55 +1,238 @@
-# SnoopBot :robot:
+# SnoopBot v2 :robot:
 
-**SnoopBot v2** is a **facebook messenger chatbot** that is made
-using **NodeJS**, **Typescript** and the **Unofficial Facebook Chat API**.
-------------------
-### Automatic Bot Tasks
-- [x] **Unsend Detection** : Detects an unsent message or attachment and resends it back to the thread.
-- [x] **Auto Greet** : Sends a welcome or farewell message when a person joins or leaves a thread.
+**SnoopBot v2** is an opensource **facebook messenger chatbot** that is made for educational purposes only. This chatbbot can be customized to your liking.
 
-### Commands Available
-**Default Prefix**: /
-- [x] `/help` : Displays the list of all available commands in this bot.
-- [x] `/info` : Displays info about SnoopBot.
-- [x] `/say <language> <phrase>` : Sends an audio synthesis of the phrase.
-- [x] `/say languages-list` : Lists all the supported languages.
-- [x] `/translate <phrase or word> to <language>` : Translates a phrase or word to a specified language.
-- [x] `/downloadTiktok <tiktok video url>` : Downloads a tiktok video from the specified tiktok url.
-- [x] `/play <song title>` : Sends an audio of the song and the lyrics of the song to the convo.
-- [x] `/define <word>` : Sends the definition of the word.
-- [x] `/wiki <query>` : Searches the wiki for your query.
-- [x] `/ris <Optional: image-url>` : Performs a Reverse Image Search.
-- [x] `/imageSearch <query>` : Search for images in google.
+### Techs Used
 
-### Admin Commands
-- [x] `/admin <promote|demote|list> <@person [, @person2, ..] | @you>` : Promote/Demote/List admins for this chatbot in a specific thread.
-- [x] `/pin <add|remove|purge|get|list> <name>` : Add/Remove/Get/List pinned message in a thread.
-- [x] `/join` : Allows the bot to respond to commands that are sent by non-admin users in a thread.
-- [x] `/leave` : Tells the bot to ignore all commands that are sent by non-admin users in a thread.
-- [x] `/permission grant <command | all> <@person | @all>` : Grants permission to all or a specific command to all or a specific person.
-- [x] `/permission revoke <command | all> <@person | @all>` : Revokes permission to all or a specific command to all or a specific person.
-- [x] `/settings <settings> <option>` : Updates bot's settings in a current thread.
-- [x] `/settings list` : Lists the current settings of the bot in a current thread.
+- NodeJS
+- Typescript
+- PuppeteerJS
+
+### Documentation
+- [Getting Started](#getting-started)
+- [Creating instance of snoopbot](#creating-instance-of-snoopbot)
+- [Adding new command](#adding-new-command)
+- [Binding to events](#defining-an-event-class)
+
+
+## Getting Started
+### Creating instance of SnoopBot
+
+Creating an instance of snoopbot is pretty straightforward, you just have to import it
+and then use it like so:
+
+Example: `src/index.ts`
+
+```typescript
+import SnoopBot from './core/snoopbot'
+
+const bot = new SnoopBot()
+bot.init()
+```
+
+The `init()` function takes in an optional argument `SnoopBotOptions` like so:
+
+```typescript
+
+bot.init({
+    handleMatches: false,
+    selfListen: false,
+    listenEvents: false,
+    listenTyping: false,
+    updatePresence: false,
+    forceLogin: false,
+    autoMarkDelivery: false,
+    autoMarkRead: false,
+    autoReconnect: true,
+    logRecordSize: 100,
+    online: true,
+    emitReady: false,
+    userAgent: ""
+})
+
+```
+
+>For further information about these options, please see the documentation of [Unofficial FCA](https://github.com/VangBanLaNhat/fca-unofficial).
+
+### Adding new command
+
+```typescript
+bot.addCommand(command: SnoopBotCommand);
+```
+
+Every commands of the bot should be inside of `src/commands` folder. And each command should be a class extending `SnoopBotCommand` class.
+
+Example: `mycommand.ts`
+
+```typescript
+import SnoopBotCommand from "../core/command"
+
+export default class MyCommand extends SnoopBotCommand {
+    public constructor(options?: SnoopBotCommandOptions) {
+        super({
+            // name: "mycommand",
+            // params: "^mycommands",
+            // ...,
+            ...options
+        })
+    }
+
+    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+        // Do something when command is executed...
+    }
+}
+```
+
+### SnoopBotCommandOptions:
+
+| Option | Default Value | Description |
+|:------:|:-------------:|-------------|
+| `params` | `""` | The regex pattern of the command |
+| `usage`  | `""` | The descriptive usage of the command |
+| `description` | `""` | The description of the command |
+| `name` | `""` | The name of the command |
+| `hasArgs` | `false` | If set to `true`, snoopbot will expect that this command accepts arguments |
+| `adminOnly` | `false` | If set to `true`, users without permission won't be able to use this command |
+| `prefix` | `""` | If specified, this command will have its own prefix. By default, the prefix for all commands is `"/"`. |
+| `handleMatches` | `false` | If regex matches should be handled by snoopbot or not. |
+
+The `execute()` function is then executed when the received message matches the command's regex pattern.
+
+All arguments of `execute()` function:
+
+`matches`: The array of message pieces that matched the regex pattern. This is where you can get the arguments of your command.
+
+EG: You have a command that plays music like: `/play <song title>`
+
+```typescript
+messageReceived = "play Your name"
+
+// Your regex pattern
+params: "^play\\s(.*)"
+
+// The value of matches:
+matches = ['play', 'Your name']
+```
+
+`event`: The event object received. See docs [here](https://github.com/VangBanLaNhat/fca-unofficial).
+
+`api`: The facebook chat api. See docs [here](https://github.com/VangBanLaNhat/fca-unofficial).
+
+`extras`: SnoopBotCommandExtras, this contains the defined options of the command.
+
+----
+
+After creating your new command, you can then export it in your `src/commands/index.ts` file like so:
+
+```typescript
+export { default as MyCommand } from "./mycommand"
+```
+
+You can then import it in your `src/index.ts` like:
+
+```typescript
+import * as commands from './commands'
+
+//or
+
+import { MyCommand } from './commands'
+```
+
+After that, you may now use it in `src/index.ts` like:
+
+```typescript
+import * as commands from './commands'
+
+bot.addCommand(new commands.MyCommand())
+```
+
+### Listening to events
+
+```typescript
+bot.on(eventType: string, eventClass: SnoopBotEvent);
+```
+
+You can listen to various event type that snoopbot offers so that you could respond
+accordingly. Here are the list of events that you can bind to:
+
+| Event | Description |
+|:-----:|:------------|
+| `gc:member_join` | Triggered when a user joins a group chat |
+| `gc:member_leave` | Triggered when a user leaves a group chat |
+| `gc:change_icon` | Triggered when a group chat changes its group icon/picture |
+| `gc:change_theme` | Triggered when a group chat changes its theme |
+| `gc:change_name` | Triggered when a group chat changes its group name |
+| `user:change_nickname` | Triggered when a user changes its nickname in a thread |
+| `message:unsend` | Triggered when a message is unsent in a thread |
+
+### Defining an event class
+
+Each event class should be in `src/events` folder and each class should extend the `SnoopBotEvent` class.
+
+Example: `myevent.ts`
+
+```typescript
+import SnoopBotEvent from "../core/event";
+
+export default class MyEvent extends SnoopBotEvent {
+    public constructor()
+    {
+        super()
+    }
+
+    public async onEvent(event: any, api: any) {}
+}
+```
+
+After defining your new event class, you can then export it in `src/events/index.ts` file like so:
+
+```typescript
+
+export { default as MyEvent } from 'myevent'
+ 
+```
+
+Next, you can then import it in your `src/index.ts` like so:
+
+```typescript
+
+import * as events from './events'
+
+// or 
+
+import { MyEvent } from './events'
+
+```
+
+You can then bind it to snoopbot via the `on()` function like so:
+
+```typescript
+import * as events from './events'
+
+bot.on('gc:member_join', new events.MyEvent())
+
+```
 
 ### Cloning
 - [x] Run `git clone https://github.com/SnoopyCodeX/snoopbot-v2` in your terminal
 - [x] Then type `cd snoopbot-v2`
 
 ### Deploying Locally
-**Before anything**, you must create a facebook dummy account for your chatbot first.
+> **Before anything**, you must create a facebook dummy account for your chatbot first.
 But this is only (**optional**), you could always use your main account but **I will not**
 **be responsible** if your account gets **banned** or **muted** by facebook.
+
 - [x] First, rename `.env.development` to `.env`
-- [x] Second, install [this extension](https://github.com/c3cbot/c3c-fbstate) to your chrome or kiwi(if you're using mobile phone)
-- [x] Third, open facebook in your chrome (or kiwi if you're using mobile phone) and login to your chatbot's account.
-- [x] Fourth, while you're on facebook, open the extension that you installed earlier on your chrome (or kiwi if you're using mobile phone).
-- [x] Copy the json string that is shown by the extension
-- [x] Then using an online json minifier tool, minify the json string that you copied
-- [x] Next, open `.env` file and put the value in `APPSTATE=`, **EG:** `APPSTATE='your minified json string here'` then save it.
+- [x] Open `.env` file and fill in your facebook `email` and `password` like so:
+
+```javascript
+FB_EMAIL=yourfacebookemail@gmail.com
+FB_PASS=yourfacebookpassword
+```
+
 - [x] Lastly, open terminal in the chatbot's root directory where the `package.json` resides
 - [x] Run `npm install` to install all the dependencies of this chatbot **IF YOU HAVEN'T** ran this command yet
-
-- [x] Run `npm run start`
+- [x] Then run `npm run start`
 
 ### Credits
 - [@Jerson Carin](https://github.com/jersoncarin)
