@@ -1,3 +1,5 @@
+import SnoopBotEvent from "../core/event";
+
 export default class MemberJoinEvent extends SnoopBotEvent {
     public constructor()
     {

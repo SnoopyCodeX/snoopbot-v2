@@ -1,3 +1,5 @@
+import SnoopBotEvent from "../core/event";
+
 export default class MemberUnsendEvent extends SnoopBotEvent {
     public constructor()
     {
