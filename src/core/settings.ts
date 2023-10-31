@@ -9,6 +9,6 @@ export default class Settings {
     }
 
     public static saveSettings(settings: SettingsType) : void {
-        writeFileSync('@core/lib/settings.json', JSON.stringify(settings, undefined, 4), {encoding: "utf8"})
+        writeFileSync(`${process.cwd()}/src/core/lib/settings.json`, JSON.stringify(settings, undefined, 4), {encoding: "utf8"})
     }
 }
