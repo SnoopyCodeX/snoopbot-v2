@@ -12,7 +12,9 @@
 - [Getting Started](#getting-started)
 - [Creating instance of snoopbot](#creating-instance-of-snoopbot)
 - [Adding new command](#adding-new-command)
-- [Binding to events](#defining-an-event-class)
+- [Binding to events](#listening-to-events)
+- [Cloning](#cloning)
+- [Deploying](#deploying-locally)
 
 
 ## Getting Started
