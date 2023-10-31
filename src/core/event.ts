@@ -1,4 +1,4 @@
-class SnoopBotEvent {
+export default class SnoopBotEvent {
     public constructor()
     {}
 
