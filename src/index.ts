@@ -1,4 +1,4 @@
-import SnoopBot from "./core/snoopbot"
+import { SnoopBot } from "./snoopbot"
 import * as commands from "./commands"
 import * as events from "./events"
 

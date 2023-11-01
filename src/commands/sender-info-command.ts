@@ -1,5 +1,4 @@
-import Logger from "../core/utils/logger";
-import SnoopBotCommand from "../core/command";
+import { SnoopBotCommand, Logger } from "../snoopbot";
 
 export default class SenderInfoCommand extends SnoopBotCommand {
     public constructor(options?: SnoopBotCommandOptions) {

@@ -1,5 +1,4 @@
-import SnoopBotCommand from "../core/command";
-import Settings from "../core/settings";
+import { SnoopBotCommand, Settings } from "../snoopbot";
 
 class HelpCommand extends SnoopBotCommand {
     public constructor(options?: SnoopBotCommandOptions) {

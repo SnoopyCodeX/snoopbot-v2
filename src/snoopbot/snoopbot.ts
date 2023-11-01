@@ -87,8 +87,8 @@ export default class SnoopBot {
 
     /**
      * Initializes SnoopBot and
-     * logs in to facebook using the provided appstate
-     * in the environment variable.
+     * logs in to facebook using the provided email
+     * and pass in the environment variable.
      * 
      * @param options Options for SnoopBot. See `SnoopBotOptions` for supported options.
      */

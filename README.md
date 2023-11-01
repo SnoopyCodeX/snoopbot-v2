@@ -10,9 +10,23 @@
 
 ### Documentation
 - [Getting Started](#getting-started)
-- [Creating instance of snoopbot](#creating-instance-of-snoopbot)
-- [Adding new command](#adding-new-command)
-- [Binding to events](#listening-to-events)
+    - [Creating instance of snoopbot](#creating-instance-of-snoopbot)
+        - [SnoopBotOptions](#snoopbotoptions)
+
+    - [Adding new command](#adding-new-command)
+        - [SnoopBotCommandOptions](#snoopbotcommandoptions)
+        - [Creating your new command](#creating-your-new-command-class)
+        - [Exporting your new command](#exporting-your-new-command)
+        - [Importing your new command](#importing-your-new-command)
+        - [Adding your new command to snoopbot](#adding-your-new-command-to-snoopbot)
+
+    - [Binding to events](#listening-to-events)
+        - [Event Types](#event-types)
+        - [Creating your new event handler class](#defining-an-event-class)
+        - [Exporting your new event handler class](#exporting-your-event-handler-class)
+        - [Importing your new event handler class](#importing-your-event-handler-class)
+        - [Binding your event handler class to an event](#binding-your-event-handler-class-to-an-event)
+
 - [Cloning](#cloning)
 - [Deploying](#deploying-locally)
 
@@ -26,11 +40,13 @@ and then use it like so:
 Example: `src/index.ts`
 
 ```typescript
-import SnoopBot from './core/snoopbot'
+import { SnoopBot } from './snoopbot'
 
 const bot = new SnoopBot()
 bot.init()
 ```
+
+#### SnoopBotOptions
 
 The `init()` function takes in an optional argument `SnoopBotOptions` like so:
 
@@ -62,12 +78,14 @@ bot.init({
 bot.addCommand(command: SnoopBotCommand);
 ```
 
+#### Creating your new command class
+
 Every commands of the bot should be inside of `src/commands` folder. And each command should be a class extending `SnoopBotCommand` class.
 
 Example: `mycommand.ts`
 
 ```typescript
-import SnoopBotCommand from "../core/command"
+import { SnoopBotCommand } from "../snoopbot"
 
 export default class MyCommand extends SnoopBotCommand {
     public constructor(options?: SnoopBotCommandOptions) {
@@ -124,11 +142,15 @@ matches = ['play', 'Your name']
 
 ----
 
+#### Exporting your new command
+
 After creating your new command, you can then export it in your `src/commands/index.ts` file like so:
 
 ```typescript
 export { default as MyCommand } from "./mycommand"
 ```
+
+#### Importing your new command
 
 You can then import it in your `src/index.ts` like:
 
@@ -139,6 +161,8 @@ import * as commands from './commands'
 
 import { MyCommand } from './commands'
 ```
+
+#### Adding your new command to snoopbot
 
 After that, you may now use it in `src/index.ts` like:
 
@@ -154,6 +178,8 @@ bot.addCommand(new commands.MyCommand())
 bot.on(eventType: string, eventClass: SnoopBotEvent);
 ```
 
+#### Event Types
+
 You can listen to various event type that snoopbot offers so that you could respond
 accordingly. Here are the list of events that you can bind to:
 
@@ -167,14 +193,14 @@ accordingly. Here are the list of events that you can bind to:
 | `user:change_nickname` | Triggered when a user changes its nickname in a thread |
 | `message:unsend` | Triggered when a message is unsent in a thread |
 
-### Defining an event class
+#### Defining an event handler class
 
 Each event class should be in `src/events` folder and each class should extend the `SnoopBotEvent` class.
 
 Example: `myevent.ts`
 
 ```typescript
-import SnoopBotEvent from "../core/event";
+import { SnoopBotEvent } from "../snoopbot";
 
 export default class MyEvent extends SnoopBotEvent {
     public constructor()
@@ -186,6 +212,8 @@ export default class MyEvent extends SnoopBotEvent {
 }
 ```
 
+#### Exporting your event handler class
+
 After defining your new event class, you can then export it in `src/events/index.ts` file like so:
 
 ```typescript
@@ -193,6 +221,8 @@ After defining your new event class, you can then export it in `src/events/index
 export { default as MyEvent } from 'myevent'
  
 ```
+
+#### Importing your event handler class
 
 Next, you can then import it in your `src/index.ts` like so:
 
@@ -205,6 +235,8 @@ import * as events from './events'
 import { MyEvent } from './events'
 
 ```
+
+#### Binding your event handler class to an event
 
 You can then bind it to snoopbot via the `on()` function like so:
 
