@@ -8,8 +8,10 @@ import Queue from "./queue"
 import Authenticator from "./auth/authenticator"
 import { readFileSync } from "fs"
 import SnoopBotEvent from "./event"
+import chalk from "chalk"
 
 const login = require('fca-unofficial')
+const figlet = require('figlet')
 dotenv.config()
 
 export default class SnoopBot {
@@ -97,6 +99,13 @@ export default class SnoopBot {
             ...this.options,
             ...options,
         }
+
+        let data = readFileSync(`${process.cwd()}/src/snoopbot/fonts/3d.flf`, "utf-8");
+        figlet.parseFont("3d", data);
+
+        console.log(chalk.blueBright(figlet.textSync("SnoopBot-v2", {
+            font: "3d"
+        })))
 
         try {
             Logger.muted('Logging in...')
