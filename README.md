@@ -56,6 +56,7 @@ The `init()` function takes in an optional argument `SnoopBotOptions` like so:
 
 bot.init({
     handleMatches: false,
+    debugMode: false,
     selfListen: false,
     listenEvents: false,
     listenTyping: false,
