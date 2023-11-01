@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "A facebook chatbot made using NodeJS and Unofficial Facebook Chat API",
   "main": "src/index.ts",
-  "os": ["!android", "!ios"],
+  "os": [
+    "!android",
+    "!ios"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx rimraf ./build && tsc --build --force",
@@ -27,6 +30,7 @@
     "chalk": "^4.1.2",
     "dotenv": "^16.3.1",
     "fca-unofficial": "^1.3.10",
+    "figlet": "^1.7.0",
     "puppeteer": "^21.4.1"
   }
 }
