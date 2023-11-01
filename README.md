@@ -220,7 +220,7 @@ After defining your new event class, you can then export it in `src/events/index
 
 ```typescript
 
-export { default as MyEvent } from 'myevent'
+export { default as MyEvent } from './myevent'
  
 ```
 
