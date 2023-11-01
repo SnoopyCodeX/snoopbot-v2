@@ -23,6 +23,7 @@ export default class SnoopBot {
     private options: SnoopBotOptions = {
         configs: {},
         handleMatches: false,
+        debugMode: false,
 
         selfListen: false,
         listenEvents: true,
@@ -40,6 +41,17 @@ export default class SnoopBot {
 
     private getCommandsOptions() : Array<SnoopBotCommandOptions> {
         return this.commands.map((command) => command.options)
+    }
+
+    private printBanner() : void {
+        process.stdout.write("\u001b[2J\u001b[0;0H")
+
+        let data = readFileSync(`${process.cwd()}/src/snoopbot/fonts/3d.flf`, "utf-8")
+        figlet.parseFont("3d", data)
+
+        console.log(chalk.blueBright(figlet.textSync("SnoopBot-v2", { font: "3d" })))
+        console.log(chalk`{bold {red ====[ {blue Made by SnoopyCodeX}} {red |} {red {blue ©️ 2023} {red |} {blue v0.0.1} {red |} {blue https://github.com/SnoopyCodeX/snoopbot-v2} ]====}}`)
+        console.log()
     }
     
     /**
@@ -100,12 +112,10 @@ export default class SnoopBot {
             ...options,
         }
 
-        let data = readFileSync(`${process.cwd()}/src/snoopbot/fonts/3d.flf`, "utf-8");
-        figlet.parseFont("3d", data);
+        this.printBanner()
 
-        console.log(chalk.blueBright(figlet.textSync("SnoopBot-v2", {
-            font: "3d"
-        })))
+        if(!!this.options.debugMode)
+            Logger.muted("SnoopBot is currently running in debug mode. You may disable this in the snoopbot's options.")
 
         try {
             Logger.muted('Logging in...')
@@ -124,10 +134,12 @@ export default class SnoopBot {
     
                     let settings = Settings.getSettings()
                     let prefix = settings.defaultSettings.prefix
+                    let { configs, handleMatches, debugMode, ...apiOptions } = this.options;
     
                     api.setOptions({
                         listenEvents: this.options.listenEvents,
-                        selfListen: this.options.selfListen
+                        selfListen: this.options.selfListen,
+                        ...apiOptions,
                     })
     
                     Logger.muted('Listening for messages...')
@@ -135,7 +147,8 @@ export default class SnoopBot {
                     api.listen(async (error: any, event: any) => {
                         if(error) return Logger.error(`Listening failed, cause: ${error}`)
 
-                        Logger.muted(`Event received: ${JSON.stringify(event)}`)
+                        if(!!this.options.debugMode)
+                            Logger.muted(`Event received: ${JSON.stringify(event)}`)
     
                         if(event.type === 'event') {
                             let thread = await api.getThreadInfo(event.threadID)

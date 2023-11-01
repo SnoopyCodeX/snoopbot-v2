@@ -4,7 +4,8 @@ import * as events from "./events"
 
 const bot = new SnoopBot()
 bot.init({
-    selfListen: true
+    selfListen: true,
+    debugMode: true,
 })
 
 bot.on('gc:member_join', new events.MemberJoinEvent())
