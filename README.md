@@ -8,6 +8,8 @@
 - Typescript
 - PuppeteerJS
 
+![Preview](./screenshots/preview.png)
+
 ### Documentation
 - [Getting Started](#getting-started)
     - [Creating instance of snoopbot](#creating-instance-of-snoopbot)
