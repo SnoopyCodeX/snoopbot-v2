@@ -66,7 +66,7 @@ export default class Downloader {
                     reader.on('end', () => {
                         writer.close();
                         controller.close();
-                      });
+                    });
               
                     reader.on('error', (error: any) => {
                         console.log(error.message)
