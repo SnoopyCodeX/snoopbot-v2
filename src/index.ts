@@ -14,3 +14,4 @@ bot.on('message:unsend', new events.MessageUnsendEvent())
 
 bot.addCommand(new commands.HelpCommand())
 bot.addCommand(new commands.SenderInfoCommand())
+bot.addCommand(new commands.PlayCommand())
