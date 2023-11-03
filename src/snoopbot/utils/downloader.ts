@@ -101,9 +101,9 @@ export default class Downloader {
     /**
      * Downloads a file and returns it as a readable stream
      * 
-     * @param url The download url of the file
-     * @param debugMode Enables logging messages to console when set to `true`
-     * @returns 
+     * @param {string} url The download url of the file
+     * @param {boolean} debugMode Enables logging messages to console when set to `true`
+     * @returns {Promise<DownloadResult>}
      */
     public static async downloadFile(url: string, debugMode: boolean = false) : Promise<DownloadResult> {
         try {
@@ -158,7 +158,7 @@ export default class Downloader {
      * it as a readable stream.
      * 
      * @param {string} video The title of the video to search and download on youtube
-     * @param {YTDOwnloadType} type The preferred download type
+     * @param {YTDownloadType} type The preferred download type
      * @param {boolean} debugMode Enabled logging messages to console when set to `true`
      * @returns {Promise<DownloadResult>}
      */
@@ -216,7 +216,10 @@ export default class Downloader {
             // Download success, return the file as a readable stream
             return {
                 hasError: false,
-                results: [Downloader.addFormDataInfo(Readable.fromWeb(downloadStream), downladFilename, sizeInBytes, downloadMimeType), videoTitle]
+                results: [
+                    Downloader.addFormDataInfo(Readable.fromWeb(downloadStream), downladFilename, sizeInBytes, downloadMimeType), 
+                    videoTitle
+                ]
             }
         } catch(error: any) {
             if(debugMode)
