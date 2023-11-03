@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "rootDir": "src",
+    "rootDir": "./src",
     "baseUrl": "./src",
     "outDir": "build",
     "noImplicitAny": true,
