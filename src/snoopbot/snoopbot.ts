@@ -240,6 +240,7 @@ export default class SnoopBot {
                                     let extras = {
                                         ...command.options,
                                         commands: this.getCommandsOptions(),
+                                        debugMode,
                                         global
                                     }
     

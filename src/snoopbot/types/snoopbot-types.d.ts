@@ -38,6 +38,7 @@ type SnoopBotCommandExtras = {
     prefix?: string = '';
     handleMatches?: boolean;
     commands: SnoopBotCommandOptions[];
+    debugMode?: boolean;
     global: any;
 }
 
