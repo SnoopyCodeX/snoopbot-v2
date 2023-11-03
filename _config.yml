@@ -1,6 +1,6 @@
 title: SnoopBot-v2 Docs
 description: SnoopBot is an opensource facebook messenger chatbot made using NodeJS, Typescript and PuppeteerJS
 show_downloads: true
-remote_theme: pages-themes/hacker@v0.2.0
+remote_theme: pages-themes/minimal@v0.2.0
 plugins:
-  - jekyll-remote-theme # add this line to the plugins list if you already have one
+  - jekyll-remote-theme
