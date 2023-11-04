@@ -5,7 +5,8 @@ import { existsSync, writeFileSync } from "fs";
 import Logger from "../utils/logger";
 dotenv.config()
 
-const chromium = require("chromium")
+const { exec } = require("node:child_process")
+const { promisify } = require("node:util")
 
 export default class Authenticator {
     public constructor() {}
@@ -31,10 +32,11 @@ export default class Authenticator {
         const paswd: string = process.env.FB_PASS;
 
         return await (async () => {
+            const { stdout: chromiumPath } = await promisify(exec)("which chromium");
+
             const browser = await puppeteer.launch({
-                // headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                headless: "new",
-                executablePath: chromium.path
+                headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                executablePath: chromiumPath.trim()
             });
 
             try {
