@@ -6,7 +6,7 @@ import Logger from "./utils/logger"
 import Command from "./command"
 import Queue from "./queue"
 import Authenticator from "./auth/authenticator"
-import { readFileSync } from "fs"
+import { readFileSync, unlinkSync } from "fs"
 import SnoopBotEvent from "./event"
 import chalk from "chalk"
 
@@ -15,6 +15,9 @@ const figlet = require('figlet')
 dotenv.config()
 
 export default class SnoopBot {
+    private MAX_LOGIN_RETRY: number = 3
+    private login_retry_count: number = 0
+
     private commands: Array<Command> = []
     private events: SnoopBotThreadEvent = {}
     private commandMiddlewares: Array<Function> = []
@@ -120,14 +123,30 @@ export default class SnoopBot {
         try {
             Logger.muted('Logging in...')
             
-            Authenticator.authenticate().then(() => {
+            Authenticator.authenticate(this.login_retry_count > 0).then(() => {
                 const cookie = Buffer.from(
                     readFileSync(`${process.cwd()}/state.session`, "utf-8"),
                     "base64"
                 ).toString("utf-8");
 
                 login({ appState: JSON.parse(cookie) }, (error: any, api: any) => {
-                    if(error) return Logger.error(`Failed to login, please check the provided credentials.`)
+                    if(error) {
+                        Logger.error("Logging in failed, might be because the session is expired.")
+
+                        if((this.login_retry_count + 1) > this.MAX_LOGIN_RETRY) {
+                            Logger.error("Reached maximum number of retries, terminating...")
+                            return
+                        }
+                        
+                        Logger.muted("Deleting stored cookie...")
+                        unlinkSync(`${process.cwd()}/session.state`)
+
+                        Logger.muted("Trying to reauthenticate...")
+                        this.login_retry_count++
+                        this.init(options)
+
+                        return
+                    }
     
                     Logger.muted('Logged in successfully...')
                     Logger.success('I am up and running!🚀')

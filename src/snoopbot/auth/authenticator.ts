@@ -1,9 +1,11 @@
 import puppeteer from "puppeteer"
 import dotenv from "dotenv"
-import { writeFileSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 
 import Logger from "../utils/logger";
 dotenv.config()
+
+const chromium = require("chromium")
 
 export default class Authenticator {
     public constructor() {}
@@ -16,7 +18,11 @@ export default class Authenticator {
      * @source https://github.com/jersoncarin/fb-chat-command/blob/main/cli.js
      * @return Promise<void>
      */
-    public static async authenticate() : Promise<void> {
+    public static async authenticate(forceAuthenticate: boolean = false) : Promise<void> {
+        if(existsSync(`${process.cwd()}/state.session`) && !forceAuthenticate) {
+            return
+        }
+
         if(!process.env.FB_EMAIL || !process.env.FB_PASS) {
             throw new Error("No facebook credentials were found. Please see documentation on how to configure your facebook credentials.")
         }
@@ -26,7 +32,9 @@ export default class Authenticator {
 
         return await (async () => {
             const browser = await puppeteer.launch({
-                headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox']
+                // headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                headless: "new",
+                executablePath: chromium.path
             });
 
             try {
