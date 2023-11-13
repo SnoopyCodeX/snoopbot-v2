@@ -13,5 +13,5 @@ bot.on('gc:member_leave', new events.MemberLeaveEvent())
 bot.on('message:unsend', new events.MessageUnsendEvent())
 
 bot.addCommand(new commands.HelpCommand())
-bot.addCommand(new commands.SenderInfoCommand())
 bot.addCommand(new commands.PlayCommand())
+bot.addCommand(new commands.ReverseImageSearchCommand())
