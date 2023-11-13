@@ -22,6 +22,7 @@ export default class SnoopBot {
     private events: SnoopBotThreadEvent = {}
     private commandMiddlewares: Array<Function> = []
     private queue: Queue = new Queue(1, "GlobalQueue")
+    private messages: MessageType = {}
 
     private options: SnoopBotOptions = {
         configs: {},
@@ -168,7 +169,42 @@ export default class SnoopBot {
 
                         if(!!this.options.debugMode)
                             Logger.muted(`Event received: ${JSON.stringify(event)}`)
+
+                        // Intercept 'message' and 'message_reply' events 
+                        // as this will be used when we resend the unsent messages to the
+                        // thread again.
+                        if(event.type === 'message' || event.type === 'message_reply') {
+                            let attachments = event.attachments;
+                            let messageID = event.messageID;
+                            let mentions = event.mentions;
+                            let message = event.body;
+
+                            // If there is an attachment, store it in the object as well
+                            // This will be resent back to the thread
+                            if(attachments.length !== 0) {
+                                this.messages[messageID] = attachments;
+                            }
+
+                            // If the message body isn't empty, store the message body
+                            // to the object too
+                            if(message.length !== 0) {
+                                if(this.messages[messageID] !== undefined) {
+                                    for(let msg of this.messages[messageID]) {
+                                        msg.message = message;
+                                        msg.mentions = mentions;
+                                    }
+                                } else {
+                                    this.messages[messageID] = {
+                                        message,
+                                        mentions,
+                                        normal: true
+                                    }
+                                }
+                            }
+                        }
     
+                        // Intercept events as these will be used to
+                        // bind to user-defined callbacks
                         if(event.type === 'event') {
                             let thread = await api.getThreadInfo(event.threadID)
                             let eventType = event.logMessageType
@@ -230,6 +266,17 @@ export default class SnoopBot {
                                     if(this.events['user:change_nickname'] !== undefined)
                                         this.queue.enqueue(async() => await this.events['user:change_nickname'].onEvent(event, api))
                                 break
+                            }
+                        }
+
+                        // If the event type is "message_unsend"
+                        if(event.type === 'message_unsend') {
+                            // Execute the callback if it exists in the events array
+                            if(this.events['message:unsend'] !== undefined) {
+                                // Include the messages object in the event object
+                                event.messages = this.messages;
+
+                                this.queue.enqueue(async() => await this.events['message:unsend'].onEvent(event, api));
                             }
                         }
     
