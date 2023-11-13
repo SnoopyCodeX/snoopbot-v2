@@ -66,3 +66,7 @@ type SnoopBotEventType =
 type SnoopBotThreadEvent = {
     [key: string]: SnoopBotEvent;
 }
+
+type MessageType = {
+    [key: string]: any
+}
