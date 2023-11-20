@@ -15,3 +15,7 @@ bot.on('message:unsend', new events.MessageUnsendEvent())
 bot.addCommand(new commands.HelpCommand())
 bot.addCommand(new commands.PlayCommand())
 bot.addCommand(new commands.ReverseImageSearchCommand())
+
+// Admin commands
+bot.addCommand(new commands.JoinOrLeaveCommand({adminOnly: true}));
+bot.addCommand(new commands.PermissionCommand({adminOnly: true}));
