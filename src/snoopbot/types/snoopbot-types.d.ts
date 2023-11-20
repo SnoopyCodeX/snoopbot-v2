@@ -52,7 +52,7 @@ type SnoopBotCommandExtras = {
  * @event gc:change_theme Triggered when a group chat changes its theme
  * @event gc:change_name Triggered when a group chat changes its name
  * @event user:change_nickname Triggered when a user changes its nickname
- * @event message:unsent Triggered when a message is unsent
+ * @event message:unsend Triggered when a message is unsent
  */
 type SnoopBotEventType = 
      'gc:member_join' |
