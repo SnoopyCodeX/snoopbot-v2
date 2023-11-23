@@ -1,5 +1,6 @@
 run = "npm run start"
 hidden = [".config", "package-lock.json", "tsconfig.json", "state.session"]
+entrypoint = "index.ts"
 
 [packager]
 language = "nodejs"
