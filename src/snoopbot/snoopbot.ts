@@ -283,13 +283,22 @@ export default class SnoopBot {
                         settings = Settings.getSettings()
                         const threadSettings = settings.threads[event.threadID] || settings.defaultSettings
                         prefix = threadSettings.prefix
+
+                        if(this.commands.length == 0) {
+                            return Logger.error('No commands added. Please add at least 1 command')
+                        }
     
                         this.commands.forEach((command) => {
+                            if(command.options.name === undefined) {
+                                return Logger.error('All commands must have a `name` set in its options')
+                            }
+
+                            if(command.options.params === undefined) {
+                                return Logger.error('All commands must have a `params` set in its options')
+                            }
+
                             if((getType(command.execute) === 'Function' || getType(command.execute) === 'AsyncFunction') && event.body !== undefined) {
                                 const _prefix_ = event.body.substring(0, prefix.length)
-    
-                                if(command.options.params === undefined)
-                                    return Logger.error('No commands added, please add at least 1 command')
     
                                 const commandPrefix = command.options.prefix || prefix
                                 let commandBody = event.body.substring(prefix.length).replace(/\n/g, " ")
