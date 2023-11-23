@@ -149,7 +149,7 @@ export default class PermissionCommand extends SnoopBotCommand {
 
     public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
         let action = matches[1]; // grant | revoke | list
-        let commandsToGive = matches[2].split(', '); // @all | <command1, command2, ...>
+        let commandsToGive = matches[2].split(', '); // all | <command1, command2, ...>
         let persons = event.mentions; // <@person1, @person2, ...>
 
         switch(action) {
@@ -201,7 +201,7 @@ export default class PermissionCommand extends SnoopBotCommand {
         // Check if command specified exists in the bot
         let hasCommands = commands.some((command) => commandsToGive.includes(command.name!));
         if(!hasCommands) {
-            api.sentMessage("⚠️ Unknown command(s): '" + commands.join(',') + "'.", event.threadID, event.messageID);
+            api.sendMessage("⚠️ Unknown command(s): '" + commands.join(',') + "'.", event.threadID, event.messageID);
             return;
         }
 
