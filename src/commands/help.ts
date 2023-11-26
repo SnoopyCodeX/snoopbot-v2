@@ -35,7 +35,7 @@ class HelpCommand extends SnoopBotCommand {
             if(!message.includes("** Admin Commands **"))
                 message += "** Admin Commands **\n\n"
 
-            message += `${prefix + command.usage}: ${command.description}\n\n`
+            message += `${prefix + command.usage!}: ${command.description}\n\n`
         })
 
         message += "© Made with ❣️ by John Roy🍀"
