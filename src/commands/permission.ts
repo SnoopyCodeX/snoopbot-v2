@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { SnoopBotCommand } from "../snoopbot";
+import { AdminUtils } from "./admin";
 
 /**
  * Permission Utility class
@@ -9,7 +10,7 @@ import { SnoopBotCommand } from "../snoopbot";
  * 
  * @class
  */
-class PermissionUtil {
+export class PermissionUtil {
     constructor() {}
 
     /**
@@ -46,6 +47,12 @@ class PermissionUtil {
     public static userHasPermission(threadID: string, userID: string, ...commands: string[]): boolean {
         let permissions = PermissionUtil.getPermissionSettings();
         let hasPermission = false;
+
+        let threadAdmins = AdminUtils.getThreadAdmins(threadID)
+        let admins = threadAdmins.hasError ? [] : threadAdmins.admins!
+
+        if(admins.includes(userID) || (userID === threadAdmins.botOwner))
+            return true
 
         if(permissions[threadID] != null) {
             let users = permissions[threadID].users;
@@ -113,12 +120,8 @@ class PermissionUtil {
             return true;
 
         let userGrantedPerms = permissions[threadID].users[userID].permissions;
-        let tempPermissions: string[] = [];
 
-        for(let perm of userGrantedPerms)
-            tempPermissions = commands.filter((_) => !commands.includes(perm));
-
-        permissions[threadID].users[userID].permissions = tempPermissions;
+        permissions[threadID].users[userID].permissions = userGrantedPerms.filter((command: string) => !commands.includes(command))
 
         if(permissions[threadID].users[userID].permissions.length === 0)
 	        delete permissions[threadID].users[userID];
@@ -149,7 +152,7 @@ export default class PermissionCommand extends SnoopBotCommand {
 
     public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
         let action = matches[1]; // grant | revoke | list
-        let commandsToGive = matches[2].split(', '); // all | <command1, command2, ...>
+        let commandsToGive = (matches[2] as string).trim().split(','); // all | <command1, command2, ...>
         let persons = event.mentions; // <@person1, @person2, ...>
 
         switch(action) {
@@ -201,14 +204,18 @@ export default class PermissionCommand extends SnoopBotCommand {
         // Check if command specified exists in the bot
         let hasCommands = commands.some((command) => commandsToGive.includes(command.name!));
         if(!hasCommands) {
-            api.sendMessage("⚠️ Unknown command(s): '" + commands.join(',') + "'.", event.threadID, event.messageID);
+            api.sendMessage("⚠️ Unknown command(s): '" + commandsToGive.join(',') + "'.", event.threadID, event.messageID);
             return;
         }
 
         // Filter out commands that are for admins only
-        commandsToGive = commands
-            .filter((command) => !command.adminOnly)
+        let adminCommands = commands
+            .filter((command) => command.adminOnly)
             .map((command) => command.name!);
+
+        commandsToGive = commandsToGive
+            .filter((command) => !adminCommands.includes(command))
+            .map((command) => command.trim())
 
         // Grant permissions to all mentioned users
         let msg = "🤖Gave permission to: \n\n";
@@ -233,12 +240,12 @@ export default class PermissionCommand extends SnoopBotCommand {
         return;
     }
 
-    private async revoke(matches: any[], event: any, api: any, commandsToGive: string[], commands: SnoopBotCommandOptions[], persons: any) {
+    private async revoke(matches: any[], event: any, api: any, commandsToRevoke: string[], commands: SnoopBotCommandOptions[], persons: any) {
         let mentions = [];
 
         // If admin specified 'all'
-        if(commandsToGive[0] === 'all')
-            commandsToGive = commands.map((command) => command.name!);
+        if(commandsToRevoke[0] === 'all')
+            commandsToRevoke = commands.map((command) => command.name!);
 
         // If no mentions
         if(Object.entries(persons).length === 0) {
@@ -264,21 +271,25 @@ export default class PermissionCommand extends SnoopBotCommand {
         }
 
         // Check if command exists
-        let hasCommand = commands.some((command) => commandsToGive.includes(command.name!));
+        let hasCommand = commands.some((command) => commandsToRevoke.includes(command.name!));
         if(!hasCommand) {
-            api.sendMessage("⚠️Unknown command(s): '" + commandsToGive.join(",") + "'.", event.threadID, event.messageID);
+            api.sendMessage("⚠️Unknown command(s): '" + commandsToRevoke.join(",") + "'.", event.threadID, event.messageID);
             return;
         }
 
         // Filter out commands that are for admins only
-        commandsToGive = commands
-            .filter((command) => !command.adminOnly)
+        let adminCommands = commands
+            .filter((command) => command.adminOnly)
             .map((command) => command.name!);
+
+        commandsToRevoke = commandsToRevoke
+            .filter((command) => !adminCommands.includes(command))
+            .map((command) => command.trim())
 
         // Revoke permissions to all mentioned users
         let msg = "🤖Revoked permission to: \n\n";
         for(let key in persons) {
-            PermissionUtil.removePermissionFromUserInThread(event.threadID, key, ...commandsToGive);
+            PermissionUtil.removePermissionFromUserInThread(event.threadID, key, ...commandsToRevoke);
 
             msg += persons[key] + " ";
             mentions.push({
@@ -290,7 +301,7 @@ export default class PermissionCommand extends SnoopBotCommand {
         msg = msg.substring(0, msg.length - 1);
 
         let message = {
-            body: `${msg}\n\nFor command(s): \n\n'${commandsToGive.join(", ")}'.`,
+            body: `${msg}\n\nFor command(s): \n\n'${commandsToRevoke.join(", ")}'.`,
             mentions
         };
 
