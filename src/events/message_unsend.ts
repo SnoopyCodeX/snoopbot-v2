@@ -1,4 +1,5 @@
-import { Downloader, Logger, SnoopBotEvent } from "../snoopbot";
+import { ThreadWhitelist } from "../commands/joinOrLeave";
+import { Downloader, Logger, Settings, SnoopBotEvent } from "../snoopbot";
 
 export default class MemberUnsendEvent extends SnoopBotEvent {
     public constructor()
@@ -11,6 +12,17 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
         let threadID = event.threadID;
         let senderID = event.senderID;
         let messages = event.messages;
+
+        // Ignore threads that are not whitelisted
+        let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
+        if(!threadWhitelist.threads.includes(threadID))
+            return
+
+        // Ignore if antiUnsend is disabled in this thread
+        let settingsList = Settings.getSettings()
+        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
+        if(!threadSettings.antiUnsendEnabled)
+            return
 
         let deletedMessages = messages[messageID];
 
