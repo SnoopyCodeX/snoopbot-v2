@@ -1,3 +1,4 @@
+import { ThreadWhitelist } from "../commands/joinOrLeave";
 import { Settings, SnoopBotEvent } from "../snoopbot";
 
 type MessageType = {
@@ -11,6 +12,11 @@ export default class MemberLeaveEvent extends SnoopBotEvent {
     }
 
     public async onEvent(event: any, api: any) {
+        // Ignore threads that are not whitelisted
+        let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
+        if(!threadWhitelist.threads.includes(event.threadID))
+            return
+
         let thread = await api.getThreadInfo(event.threadID);
 
         let settingsList = Settings.getSettings();
