@@ -1,6 +1,8 @@
 export { default as SnoopBot } from './snoopbot'
 export { default as SnoopBotEvent } from './event'
 export { default as SnoopBotCommand } from './command'
+export { default as SnoopBotMiddleware } from './middleware'
 export { default as Logger } from './utils/logger'
 export { default as Downloader } from './utils/downloader'
 export { default as Settings } from './settings'
+export { default as Queue } from './queue'
