@@ -2,3 +2,4 @@ node_modules
 build
 .env
 tsconfig.tsbuildinfo
+src/snoopbot/lib
