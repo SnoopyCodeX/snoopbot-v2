@@ -9,6 +9,7 @@ import Authenticator from "./auth/authenticator"
 import { readFileSync, unlinkSync } from "fs"
 import SnoopBotEvent from "./event"
 import chalk from "chalk"
+import SnoopBotMiddleware from "./middleware"
 
 const login = require('fca-unofficial')
 const figlet = require('figlet')
@@ -20,8 +21,8 @@ export default class SnoopBot {
 
     private commands: Array<Command> = []
     private events: SnoopBotThreadEvent = {}
-    private commandMiddlewares: Array<Function> = []
-    private queue: Queue = new Queue(1, "GlobalQueue")
+    private commandMiddlewares: Array<SnoopBotMiddleware> = []
+    private queue: Queue = new Queue(10, "GlobalQueue")
     private messages: MessageType = {}
 
     private options: SnoopBotOptions = {
@@ -82,7 +83,7 @@ export default class SnoopBot {
      * 
      * @param commandMiddleware Command middleware to be added
      */
-    public addCommandMiddleware(...commandMiddleware: Array<Function>) : void {
+    public addCommandMiddleware(...commandMiddleware: Array<SnoopBotMiddleware>) : void {
         this.commandMiddlewares.push(...commandMiddleware)
     }
 
@@ -298,10 +299,10 @@ export default class SnoopBot {
                             }
 
                             if((getType(command.execute) === 'Function' || getType(command.execute) === 'AsyncFunction') && event.body !== undefined) {
-                                const _prefix_ = event.body.substring(0, prefix.length)
+                                const _prefix_ = event.body.substring(0, (prefix as string).length)
     
                                 const commandPrefix = command.options.prefix || prefix
-                                let commandBody = event.body.substring(prefix.length).replace(/\n/g, " ")
+                                let commandBody = event.body.substring((prefix as string).length).replace(/\n/g, " ")
     
                                 const regexp = new RegExp(command.options.params.toString(), "gim")
                                 const matches = multilineRegex(regexp, commandBody)
@@ -320,7 +321,9 @@ export default class SnoopBot {
                                     }
     
                                     const commandCallback = () => async(matches: Array<any>, event: any, api: any, extras: any) => command.execute(matches, event, api, extras)
-                                    this.queue.enqueue(async () => await pipeline([...this.commandMiddlewares, commandCallback], matches, event, api, extras))
+                                    const commandMiddlewareFuncs = this.commandMiddlewares.map((middleware) => middleware.handle)
+                                    
+                                    this.queue.enqueue(async () => await pipeline([...commandMiddlewareFuncs, commandCallback], matches, event, api, extras))
                                 }
                             }
                         })
