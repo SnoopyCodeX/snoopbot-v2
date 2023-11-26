@@ -27,6 +27,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@shortcm/qr-image": "^9.0.4",
     "axios": "^1.6.0",
     "chalk": "^4.1.2",
     "dotenv": "^16.3.1",
@@ -39,6 +40,7 @@
     "node": "^18.13.0",
     "npm": "^9.5.1",
     "puppeteer": "^21.4.1",
+    "sharp": "^0.32.6",
     "youtubei.js": "^7.0.0"
   }
 }
