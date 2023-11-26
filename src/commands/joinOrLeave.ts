@@ -1,15 +1,15 @@
 import { readFileSync, writeFileSync } from "fs";
 import { Settings, SnoopBotCommand } from "../snoopbot";
 
-class ThreadWhitelist {
+export class ThreadWhitelist {
     constructor() {}
 
     public static getThreadWhitelist() {
-        return JSON.parse(readFileSync(`${process.cwd()}/src/snoopbot/libs/thread-whitelist.json`, {encoding: 'utf-8'}));
+        return JSON.parse(readFileSync(`${process.cwd()}/src/snoopbot/lib/thread-whitelist.json`, {encoding: 'utf-8'}));
     }
 
     public static saveThreadWhitelist(newThreadWhitelist: any) {
-        writeFileSync(`${process.cwd()}/src/snoopbot/libs/thread-whitelist.json`, JSON.stringify(newThreadWhitelist, undefined, 4), {encoding: 'utf-8'});
+        writeFileSync(`${process.cwd()}/src/snoopbot/lib/thread-whitelist.json`, JSON.stringify(newThreadWhitelist, undefined, 4), {encoding: 'utf-8'});
     }
 
     public static isThreadWhitelisted(threadID: string): boolean {
