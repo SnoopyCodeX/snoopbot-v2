@@ -113,7 +113,7 @@ export default class Downloader {
             if(response.status !== 200) {
                 return {
                     hasError: true,
-                    message: "Failed to download the file. Please try again."
+                    message: `Failed to download the file. Please try again. Status: ${response.status}, Response: ${response.statusText}`
                 }
             }
 
@@ -147,7 +147,7 @@ export default class Downloader {
 
             return {
                 hasError: true,
-                message: "An unexpected error has occured, please try again"
+                message: "An unexpected error has occured, please try again. Error: " + error 
             }
         }
     }
