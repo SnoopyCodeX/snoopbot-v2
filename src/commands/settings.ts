@@ -32,7 +32,7 @@ export default class SettingsCommand extends SnoopBotCommand {
             }
 
             const thread = await api.getThreadInfo(event.threadID)
-            let message = `⚙️Current settings of this SnoopBot in this thread:\n\n`
+            let message = `⚙️Current settings of SnoopBot in this thread:\n\n`
             let counter = 1
 
             for(let setting in threadSettings)
