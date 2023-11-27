@@ -1,5 +1,5 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { SnoopBotCommand, Downloader, Logger } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { SnoopBotCommand, Downloader } from "@snoopbot";
 
 export default class PlayCommand extends SnoopBotCommand {
     public constructor(options?: SnoopBotCommandOptions) {

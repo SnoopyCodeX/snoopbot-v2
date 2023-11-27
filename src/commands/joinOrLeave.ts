@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
-import { Settings, SnoopBotCommand } from "../snoopbot";
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
+import { Settings, SnoopBotCommand } from "@snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 
 export class ThreadWhitelist {
     constructor() {}

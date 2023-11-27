@@ -1,6 +1,6 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { ThreadWhitelist } from "../commands/joinOrLeave";
-import { Settings, SnoopBotEvent } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { ThreadWhitelist } from "@commands/joinOrLeave";
+import { Settings, SnoopBotEvent } from "@snoopbot";
 
 type MessageType = {
     body: string,

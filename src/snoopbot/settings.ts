@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs'
-import jsonSettings from './lib/settings.json'
+import jsonSettings from '@snoopbot/lib/settings.json'
 
 export default class Settings {
     public constructor() {}

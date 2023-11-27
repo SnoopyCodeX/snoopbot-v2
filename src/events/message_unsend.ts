@@ -1,6 +1,6 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { ThreadWhitelist } from "../commands/joinOrLeave";
-import { Downloader, Logger, Settings, SnoopBotEvent } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { ThreadWhitelist } from "@commands/joinOrLeave";
+import { Downloader, Logger, Settings, SnoopBotEvent } from "@snoopbot";
 
 export default class MemberUnsendEvent extends SnoopBotEvent {
     public constructor()

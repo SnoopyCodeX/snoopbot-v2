@@ -1,7 +1,7 @@
 import google from "googlethis";
 import { ReadableStream } from "stream/web";
-import { Downloader, SnoopBotCommand } from "../snoopbot";
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
+import { Downloader, SnoopBotCommand } from "@snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 
 export default class ReverseImageSearchCommand extends SnoopBotCommand {
     constructor(options?: SnoopBotCommandOptions) {

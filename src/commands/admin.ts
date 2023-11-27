@@ -1,6 +1,6 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { Settings, SnoopBotCommand } from "../snoopbot";
-import { PermissionUtil } from "./permission";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { Settings, SnoopBotCommand } from "@snoopbot";
+import { PermissionUtil } from "@commands/permission";
 
 export class AdminUtils {
     constructor() {}

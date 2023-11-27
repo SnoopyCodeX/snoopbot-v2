@@ -1,5 +1,5 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { SnoopBotCommand, Settings } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { SnoopBotCommand, Settings } from "@snoopbot";
 
 class HelpCommand extends SnoopBotCommand {
     public constructor(options?: SnoopBotCommandOptions) {

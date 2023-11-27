@@ -12,10 +12,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "rootDir": "./src",
-    "baseUrl": "./src",
+    "rootDir": "src",
+    "baseUrl": "src",
     "outDir": "build",
     "noImplicitAny": true,
+    "paths": {
+      "@/*": ["*"],
+      "@commands/*": ["commands/*"],
+      "@events/*": ["events/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@snoopbot/*": ["snoopbot/*"],
+      "@commands": ["commands/index"],
+      "@events": ["events/index"],
+      "@middlewares": ["middlewares/index"],
+      "@snoopbot": ["snoopbot/index"],
+    }
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

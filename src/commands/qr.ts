@@ -1,9 +1,9 @@
 import { createReadStream, createWriteStream, existsSync, unlink } from "fs";
-import { Downloader, Logger, SnoopBotCommand } from "../snoopbot";
+import { Downloader, Logger, SnoopBotCommand } from "@snoopbot";
 import dotenv from 'dotenv'
 import sharp from "sharp";
 import { Readable } from "stream";
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 dotenv.config()
 
 export default class QRCodeCommand extends SnoopBotCommand {

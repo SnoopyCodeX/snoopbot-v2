@@ -1,7 +1,7 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { AdminUtils } from "../commands/admin";
-import { PermissionUtil } from "../commands/permission";
-import { SnoopBotMiddleware } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { AdminUtils } from "@commands/admin";
+import { PermissionUtil } from "@commands/permission";
+import { SnoopBotMiddleware } from "@snoopbot";
 
 export default class PermissionMiddleware extends SnoopBotMiddleware {
     constructor()

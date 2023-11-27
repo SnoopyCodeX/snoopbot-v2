@@ -1,4 +1,4 @@
-import Queue from "./queue";
+import Queue from "@snoopbot/queue";
 
 const playerQueue = new Queue(1, "PlayerQueue")
 const eventsQueue = new Queue(1, "EventsQueue")

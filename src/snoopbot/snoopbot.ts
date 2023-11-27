@@ -1,17 +1,17 @@
 import dotenv from "dotenv"
-import { getType, multilineRegex, pipeline } from './utils/utils'
-import global from './global'
-import Settings from "./settings"
-import Logger from "./utils/logger"
-import Command from "./command"
-import Queue from "./queue"
-import Authenticator from "./auth/authenticator"
+import { getType, multilineRegex, pipeline } from '@snoopbot/utils/utils'
+import global from '@snoopbot/global'
+import Settings from "@snoopbot/settings"
+import Logger from "@snoopbot/utils/logger"
+import Command from "@snoopbot/command"
+import Queue from "@snoopbot/queue"
+import Authenticator from "@snoopbot/auth/authenticator"
 import { readFileSync, unlinkSync } from "fs"
-import SnoopBotEvent from "./event"
+import SnoopBotEvent from "@snoopbot/event"
 import chalk from "chalk"
-import SnoopBotMiddleware from "./middleware"
-import { FCAMainAPI, FCAMainEvent } from "./types/fca-types"
-import Crypt from "./utils/crypt"
+import SnoopBotMiddleware from "@snoopbot/middleware"
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types"
+import Crypt from "@snoopbot/utils/crypt"
 
 const login = require('fca-unofficial')
 const figlet = require('figlet')

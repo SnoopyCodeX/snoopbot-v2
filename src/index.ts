@@ -1,7 +1,9 @@
-import { SnoopBot } from "./snoopbot"
-import * as commands from "./commands"
-import * as middlewares from "./middlewares"
-import * as events from "./events"
+import 'module-alias/register'
+import { SnoopBot } from "@snoopbot"
+import * as commands from "@commands"
+import * as middlewares from "@middlewares"
+import * as events from "@events"
+import "@/server"
 
 // Initialize SnoopBot
 const bot = new SnoopBot()

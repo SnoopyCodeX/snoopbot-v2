@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
-import { SnoopBotCommand } from "../snoopbot";
-import { AdminUtils } from "./admin";
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
+import { SnoopBotCommand } from "@snoopbot";
+import { AdminUtils } from "@commands/admin";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 
 /**
  * Permission Utility class

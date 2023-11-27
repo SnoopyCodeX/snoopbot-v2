@@ -1,0 +1,12 @@
+TODO:
+    - Update README.md
+
+Events to be Implemented:
+    - GC Change Thread Name Event
+    - GC Change Thread Photo Event
+    - GC Change Thread Theme Event
+    - User Change Nickname Event
+
+Commands to be implemented:
+    Admin commands:
+        - Pin message command

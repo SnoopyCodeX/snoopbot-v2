@@ -1,5 +1,5 @@
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
-import { Settings, SnoopBotCommand } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
+import { Settings, SnoopBotCommand } from "@snoopbot";
 
 export default class SettingsCommand extends SnoopBotCommand {
     constructor(options?: SnoopBotCommandOptions) {

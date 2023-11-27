@@ -1,10 +1,10 @@
-import { Downloader, Logger, Settings, SnoopBotEvent } from "../snoopbot";
+import { Downloader, Logger, Settings, SnoopBotEvent } from "@snoopbot";
 import sharp from "sharp"
 import dotenv from "dotenv"
 import { Readable } from "stream";
 import { createReadStream, createWriteStream, existsSync, unlink } from "fs";
-import { ThreadWhitelist } from "../commands/joinOrLeave";
-import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
+import { ThreadWhitelist } from "@commands/joinOrLeave";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 dotenv.config()
 
 type MessageType = {

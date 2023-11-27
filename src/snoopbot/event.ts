@@ -1,4 +1,4 @@
-import { FCAMainAPI, FCAMainEvent } from "./types/fca-types";
+import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 
 export default class SnoopBotEvent {
     /**
