@@ -10,6 +10,8 @@ import { readFileSync, unlinkSync } from "fs"
 import SnoopBotEvent from "./event"
 import chalk from "chalk"
 import SnoopBotMiddleware from "./middleware"
+import { FCAMainAPI, FCAMainEvent } from "./types/fca-types"
+import Crypt from "./utils/crypt"
 
 const login = require('fca-unofficial')
 const figlet = require('figlet')
@@ -126,12 +128,10 @@ export default class SnoopBot {
             Logger.muted('Logging in...')
             
             Authenticator.authenticate(this.login_retry_count > 0).then(() => {
-                const cookie = Buffer.from(
-                    readFileSync(`${process.cwd()}/state.session`, "utf-8"),
-                    "base64"
-                ).toString("utf-8");
+                const cookie = Crypt.decrypt(readFileSync(`${process.cwd()}/state.session`, "utf-8"));
+                const decryptedCookie = Buffer.from(cookie, 'base64').toString('utf-8');
 
-                login({ appState: JSON.parse(cookie) }, (error: any, api: any) => {
+                login({ appState: JSON.parse(decryptedCookie) }, (error: any, api: FCAMainAPI) => {
                     if(error) {
                         Logger.error("Logging in failed, might be because the session is expired.")
 
@@ -165,7 +165,7 @@ export default class SnoopBot {
     
                     Logger.muted('Listening for messages...')
     
-                    api.listen(async (error: any, event: any) => {
+                    api.listen(async (error: any, event: FCAMainEvent) => {
                         if(error) return Logger.error(`Listening failed, cause: ${error}`)
 
                         if(!!this.options.debugMode)
@@ -175,10 +175,10 @@ export default class SnoopBot {
                         // as this will be used when we resend the unsent messages to the
                         // thread again.
                         if(event.type === 'message' || event.type === 'message_reply') {
-                            let attachments = event.attachments;
-                            let messageID = event.messageID;
-                            let mentions = event.mentions;
-                            let message = event.body;
+                            let attachments = event.attachments!;
+                            let messageID = event.messageID!;
+                            let mentions = event.mentions!;
+                            let message = event.body!;
 
                             // If there is an attachment, store it in the object as well
                             // This will be resent back to the thread
@@ -208,7 +208,7 @@ export default class SnoopBot {
                         // bind to user-defined callbacks
                         if(event.type === 'event') {
                             let thread = await api.getThreadInfo(event.threadID)
-                            let eventType = event.logMessageType
+                            let eventType = event.logMessageType!
     
                             switch(eventType) {
                                 // Member joined a group chat
@@ -320,7 +320,7 @@ export default class SnoopBot {
                                         global
                                     }
     
-                                    const commandCallback = () => async(matches: Array<any>, event: any, api: any, extras: any) => command.execute(matches, event, api, extras)
+                                    const commandCallback = () => async(matches: Array<any>, event: FCAMainEvent, api: FCAMainAPI, extras: any) => command.execute(matches, event, api, extras)
                                     const commandMiddlewareFuncs = this.commandMiddlewares.map((middleware) => middleware.handle)
                                     
                                     this.queue.enqueue(async () => await pipeline([...commandMiddlewareFuncs, commandCallback], matches, event, api, extras))
