@@ -1,3 +1,5 @@
+import { FCAMainAPI, FCAMainEvent } from "./types/fca-types";
+
 export default class SnoopBotMiddleware {
     /**
      * Creates a middleware instance
@@ -10,5 +12,7 @@ export default class SnoopBotMiddleware {
      * 
      * @param next 
      */
-    public handle(next: (matches: any[], event: any, api: any, extra: SnoopBotCommandExtras) => Promise<any>) {}
+    public handle(next: (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => Promise<any>) {
+        throw new Error('SnoopBot::handle() is unimplemented!')
+    }
 }

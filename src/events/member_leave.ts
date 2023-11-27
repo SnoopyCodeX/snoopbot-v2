@@ -1,3 +1,4 @@
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 import { ThreadWhitelist } from "../commands/joinOrLeave";
 import { Settings, SnoopBotEvent } from "../snoopbot";
 
@@ -11,7 +12,7 @@ export default class MemberLeaveEvent extends SnoopBotEvent {
         super()
     }
 
-    public async onEvent(event: any, api: any) {
+    public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Ignore threads that are not whitelisted
         let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
         if(!threadWhitelist.threads.includes(event.threadID))

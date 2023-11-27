@@ -1,3 +1,4 @@
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 import { Settings, SnoopBotCommand } from "../snoopbot";
 
 export default class SettingsCommand extends SnoopBotCommand {
@@ -12,7 +13,7 @@ export default class SettingsCommand extends SnoopBotCommand {
         })
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras): Promise<void> {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
         let settingsList = Settings.getSettings()
         let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
         let userSettings = (matches[1].split(" ")[0] as string)

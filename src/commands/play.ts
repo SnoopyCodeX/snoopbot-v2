@@ -1,3 +1,4 @@
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 import { SnoopBotCommand, Downloader, Logger } from "../snoopbot";
 
 export default class PlayCommand extends SnoopBotCommand {
@@ -11,7 +12,7 @@ export default class PlayCommand extends SnoopBotCommand {
         })
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
         let songTitle = matches.pop()
 
         api.sendMessage(`🔍Searching for "${songTitle}"...`, event.threadID, event.messageID)

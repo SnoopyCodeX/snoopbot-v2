@@ -1,6 +1,7 @@
 import google from "googlethis";
 import { ReadableStream } from "stream/web";
 import { Downloader, SnoopBotCommand } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 
 export default class ReverseImageSearchCommand extends SnoopBotCommand {
     constructor(options?: SnoopBotCommandOptions) {
@@ -13,7 +14,7 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
         })
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
         let imageUrl = matches.pop()
         let eventType = event.type
 
@@ -42,7 +43,7 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
         }
     }
 
-    private async _doReverseImageSearchOnRepliedImage(messageBody: any, event: any, api: any, debugMode: boolean) {
+    private async _doReverseImageSearchOnRepliedImage(messageBody: any, event: FCAMainEvent, api: FCAMainAPI, debugMode: boolean) {
         let attachments = messageBody.attachments
 
         if(attachments.length === 0) {
@@ -64,7 +65,7 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
         await this._doReverseImageSearch(imageUrl, event, api, debugMode)
     }
 
-    private async _doReverseImageSearch(imageUrl: string, event: any, api: any, debugMode: boolean) {
+    private async _doReverseImageSearch(imageUrl: string, event: FCAMainEvent, api: FCAMainAPI, debugMode: boolean) {
         let downloadImageResult = await Downloader.downloadFile(imageUrl, debugMode)
 
         if(downloadImageResult.hasError) {

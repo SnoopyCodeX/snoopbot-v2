@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import { Readable } from "stream";
 import { createReadStream, createWriteStream, existsSync, unlink } from "fs";
 import { ThreadWhitelist } from "../commands/joinOrLeave";
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 dotenv.config()
 
 type MessageType = {
@@ -38,7 +39,7 @@ export default class MemberJoinEvent extends SnoopBotEvent {
         }
     }
 
-    public async onEvent(event: any, api: any) {
+    public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Ignore threads that are not whitelisted
         let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
         if(!threadWhitelist.threads.includes(event.threadID))
@@ -92,7 +93,7 @@ export default class MemberJoinEvent extends SnoopBotEvent {
 
                 await this.createBanner(firstName, threadName, profileUrl, participants.length, (banner: string) => (async() => {
                     if(banner.indexOf('failed:') !== -1) {
-                        api.sendMessage('⚠️Failed to download profile url. Reason: ' + banner.split(':')[1])
+                        api.sendMessage('⚠️Failed to download profile url. Reason: ' + banner.split(':')[1], event.threadID)
                         return
                     }
                     

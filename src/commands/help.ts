@@ -1,3 +1,4 @@
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 import { SnoopBotCommand, Settings } from "../snoopbot";
 
 class HelpCommand extends SnoopBotCommand {
@@ -11,7 +12,7 @@ class HelpCommand extends SnoopBotCommand {
         })
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
         const settings = Settings.getSettings()
         const threadSettings = settings.threads[event.threadID] || settings.defaultSettings
         const prefix = threadSettings.prefix

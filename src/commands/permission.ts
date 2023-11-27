@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { SnoopBotCommand } from "../snoopbot";
 import { AdminUtils } from "./admin";
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 
 /**
  * Permission Utility class
@@ -150,7 +151,7 @@ export default class PermissionCommand extends SnoopBotCommand {
         });
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
         let action = matches[1]; // grant | revoke | list
         let commandsToGive = (matches[2] as string).trim().split(','); // all | <command1, command2, ...>
         let persons = event.mentions; // <@person1, @person2, ...>
@@ -170,7 +171,7 @@ export default class PermissionCommand extends SnoopBotCommand {
         }
     }
 
-    private async grant(matches: any[], event: any, api: any, commandsToGive: string[], commands: SnoopBotCommandOptions[], persons: any) {
+    private async grant(matches: any[], event: FCAMainEvent, api: FCAMainAPI, commandsToGive: string[], commands: SnoopBotCommandOptions[], persons: any) {
         let mentions = [];
         
         // If admin specified "all", list all available commands in the bot
@@ -240,7 +241,7 @@ export default class PermissionCommand extends SnoopBotCommand {
         return;
     }
 
-    private async revoke(matches: any[], event: any, api: any, commandsToRevoke: string[], commands: SnoopBotCommandOptions[], persons: any) {
+    private async revoke(matches: any[], event: FCAMainEvent, api: FCAMainAPI, commandsToRevoke: string[], commands: SnoopBotCommandOptions[], persons: any) {
         let mentions = [];
 
         // If admin specified 'all'
@@ -309,7 +310,7 @@ export default class PermissionCommand extends SnoopBotCommand {
         return;
     }
 
-    private async list(matches: any[], event: any, api: any) {
+    private async list(matches: any[], event: FCAMainEvent, api: FCAMainAPI) {
         api.sendMessage("🤖This command is currently under development.", event.threadID, event.messageID);
         return;
     }

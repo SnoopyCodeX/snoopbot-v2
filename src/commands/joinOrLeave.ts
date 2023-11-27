@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { Settings, SnoopBotCommand } from "../snoopbot";
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 
 export class ThreadWhitelist {
     constructor() {}
@@ -28,7 +29,7 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
         });
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
         let action = matches[0]; // join | leave
 
         switch(action) {
@@ -42,7 +43,7 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
         }
     }
 
-    private join(event: any, api: any) {
+    private join(event: FCAMainEvent, api: FCAMainAPI) {
         let settingsList = Settings.getSettings();
         let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings;
 
@@ -63,7 +64,7 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
         api.sendMessage(msg, event.threadID, event.messageID);
     }
 
-    private leave(event: any, api: any) {
+    private leave(event: FCAMainEvent, api: FCAMainAPI) {
         let settingsList = Settings.getSettings();
         let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings;
 

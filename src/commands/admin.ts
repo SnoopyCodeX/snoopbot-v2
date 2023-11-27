@@ -1,3 +1,4 @@
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 import { Settings, SnoopBotCommand } from "../snoopbot";
 import { PermissionUtil } from "./permission";
 
@@ -109,7 +110,7 @@ export default class AdminCommand extends SnoopBotCommand {
         })
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras): Promise<void> {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
         let settingsList = Settings.getSettings()
         let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
         let adminWhitelist = AdminUtils.getThreadAdmins(event.threadID)
@@ -122,7 +123,7 @@ export default class AdminCommand extends SnoopBotCommand {
         // Promoting/Demoting user by replying to his/her message
         // The command: /admin (promote|demote) @you
         if(event.type === 'message_reply' && (action === 'promote' || action === 'demote')) {
-            let userReplyID = event.messageReply.senderID
+            let userReplyID = event.messageReply!.senderID
             let botID = await api.getCurrentUserID()
             let user = (await api.getUserInfo(userReplyID))[userReplyID]
 
@@ -255,14 +256,14 @@ export default class AdminCommand extends SnoopBotCommand {
         await this.promoteOrDemote(matches, event, api, extras);
     }
 
-    private async promoteOrDemote(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras) {
+    private async promoteOrDemote(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
         let settingsList = Settings.getSettings()
         let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
         let adminWhitelist = AdminUtils.getThreadAdmins(event.threadID)
         let admins = adminWhitelist.hasError ? [] : adminWhitelist.admins!
         let action = (matches[1] as string)
         let person = (matches[2] as string)
-        let mentions = event.mentions
+        let mentions = event.mentions!
 
         // If admin did not mentioned any users
         if(Object.entries(mentions).length === 0) {

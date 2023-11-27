@@ -1,3 +1,4 @@
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 import { ThreadWhitelist } from "../commands/joinOrLeave";
 import { Downloader, Logger, Settings, SnoopBotEvent } from "../snoopbot";
 
@@ -7,10 +8,10 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
         super()
     }
 
-    public async onEvent(event: any, api: any) {
-        let messageID = event.messageID;
+    public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
+        let messageID = event.messageID!;
         let threadID = event.threadID;
-        let senderID = event.senderID;
+        let senderID = event.senderID!;
         let messages = event.messages;
 
         // Ignore threads that are not whitelisted
@@ -113,7 +114,7 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
                             }
                         };
 
-                        api.sendeMessage(message, threadID);
+                        api.sendMessage(message, threadID);
                         continue;
                     }
 

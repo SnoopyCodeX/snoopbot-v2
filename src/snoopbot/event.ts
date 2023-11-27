@@ -1,3 +1,5 @@
+import { FCAMainAPI, FCAMainEvent } from "./types/fca-types";
+
 export default class SnoopBotEvent {
     /**
      * Creates a new event instance
@@ -11,7 +13,7 @@ export default class SnoopBotEvent {
      * @param event The event received. See `https://github.com/VangBanLaNhat/fca-unofficial`.
      * @param api The facebook chat api. See `https://github.com/VangBanLaNhat/fca-unofficial`.
      */
-    public async onEvent(event: any, api: any) {
+    public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         throw new Error("SnoopBotEvent::onEvent() is unimplmented")
     }
 }

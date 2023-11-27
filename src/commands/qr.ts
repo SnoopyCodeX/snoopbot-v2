@@ -3,6 +3,7 @@ import { Downloader, Logger, SnoopBotCommand } from "../snoopbot";
 import dotenv from 'dotenv'
 import sharp from "sharp";
 import { Readable } from "stream";
+import { FCAMainAPI, FCAMainEvent } from "snoopbot/types/fca-types";
 dotenv.config()
 
 export default class QRCodeCommand extends SnoopBotCommand {
@@ -16,7 +17,7 @@ export default class QRCodeCommand extends SnoopBotCommand {
         })
     }
 
-    public async execute(matches: any[], event: any, api: any, extras: SnoopBotCommandExtras): Promise<void> {
+    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
         let qrCode = (await import('@shortcm/qr-image/lib/png')).default
         let { getPNG } = qrCode
 
