@@ -1,8 +1,9 @@
-import puppeteer from "puppeteer"
+import puppeteer, { Browser } from "puppeteer"
 import dotenv from "dotenv"
 import { existsSync, writeFileSync } from "fs";
 
 import Logger from "../utils/logger";
+import Crypt from "../utils/crypt";
 dotenv.config()
 
 const { exec } = require("node:child_process")
@@ -32,14 +33,22 @@ export default class Authenticator {
         const paswd: string = process.env.FB_PASS;
 
         return await (async () => {
-            const { stdout: chromiumPath } = await promisify(exec)("which chromium");
-
-            const browser = await puppeteer.launch({
-                headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                executablePath: chromiumPath.trim()
-            });
+            let browser: Browser|undefined;
 
             try {
+                if(!process.env.IS_LOCAL) {
+                    const { stdout: chromiumPath } = await promisify(exec)("which chromium");
+
+                    browser = await puppeteer.launch({
+                        headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                        executablePath: chromiumPath.trim()
+                    });
+                } else {
+                    browser = await puppeteer.launch({
+                        headless: "new"
+                    });
+                }
+
                 const page = await browser.newPage();
 
                 Logger.muted("Parsing facebook login credentials...");
@@ -62,7 +71,13 @@ export default class Authenticator {
 
                 Logger.muted("Writing session file...");
 
-                writeFileSync("state.session", Buffer.from(cookieString).toString("base64"));
+                let cryptResult = Crypt.encrypt(Buffer.from(cookieString).toString("base64"))
+
+                if(cryptResult === 'failed') {
+                    return
+                }
+
+                writeFileSync("state.session", cryptResult);
 
                 Logger.success("Session file has been created!");
                 Logger.success("Starting snoopbot...");
@@ -80,7 +95,7 @@ export default class Authenticator {
                 }
             }
 
-            await browser.close();
+            if(browser !== undefined) await browser.close();
         })();
     }
 }
