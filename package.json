@@ -3,13 +3,17 @@
   "version": "0.0.1",
   "description": "A facebook chatbot made using NodeJS and Unofficial Facebook Chat API",
   "main": "src/index.ts",
+  "bin": {
+    "@snoopycodex/snoopbot": "build/snoopbot/cli/snoopbot-cli.js",
+    "snoopbot": "build/snoopbot/cli/snoopbot-cli.js"
+  },
   "os": [
     "!android",
     "!ios"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx rimraf ./build && tsc --build --force",
+    "build": "npx rimraf ./build && tsc --build --force && npm link",
     "start": "npm run build && node build/index.js"
   },
   "keywords": [
@@ -27,10 +31,13 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@commander-js/extra-typings": "^11.1.0",
     "@shortcm/qr-image": "^9.0.4",
     "@types/express": "^4.17.21",
+    "@types/lodash": "^4.14.202",
     "axios": "^1.6.0",
     "chalk": "^4.1.2",
+    "commander": "^11.1.0",
     "cryptr": "^6.3.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -38,6 +45,7 @@
     "figlet": "^1.7.0",
     "googlethis": "^1.8.0",
     "got": "^13.0.0",
+    "lodash": "^4.17.21",
     "mime": "^3.0.0",
     "module-alias": "^2.2.3",
     "node": "^18.13.0",
