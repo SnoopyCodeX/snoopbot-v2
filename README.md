@@ -1,4 +1,4 @@
-# SnoopBot v2 :robot:
+# SnoopBot v2
 
 **SnoopBot v2** is an opensource **facebook messenger chatbot** that is made for educational purposes only. This chatbbot can be customized to your liking.
 
