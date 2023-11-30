@@ -1,5 +1,4 @@
 type SnoopBotOptions = {
-    configs?: Object = {};
     handleMatches?: boolean = true;
     debugMode?: boolean = false;
     

@@ -43,6 +43,7 @@ import chalk from "chalk"
 import SnoopBotMiddleware from "@snoopbot/middleware"
 import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types"
 import Crypt from "@snoopbot/utils/crypt"
+import "@snoopbot/keep-alive"
 
 const login = require('fca-unofficial')
 const figlet = require('figlet')
@@ -59,7 +60,6 @@ export default class SnoopBot {
     private messages: MessageType = {}
 
     private options: SnoopBotOptions = {
-        configs: {},
         handleMatches: false,
         debugMode: false,
 
@@ -186,7 +186,7 @@ export default class SnoopBot {
     
                     let settings = Settings.getSettings()
                     let prefix = settings.defaultSettings.prefix
-                    let { configs, handleMatches, debugMode, ...apiOptions } = this.options;
+                    let { handleMatches, debugMode, ...apiOptions } = this.options;
     
                     api.setOptions({
                         listenEvents: this.options.listenEvents,
