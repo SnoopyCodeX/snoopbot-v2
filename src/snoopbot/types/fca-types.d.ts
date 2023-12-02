@@ -265,7 +265,37 @@ type FCAOptions = {
     autoMarkDelivery?: boolean;
     autoMarkRead?: boolean;
     proxy?: any;
-    online?: boolean;
+    online?: boolean; string;}
+
+type FCAThreadColors = {
+    MessengerBlue: string;  //DefaultBlue
+    Viking: string; //TealBlue
+    GoldenPoppy: string;  //Yellow
+    RadicalRed: string; //Red
+    Shocking: string; //LavenderPurple
+    FreeSpeechGreen: string; //Green
+    Pumpkin: string;  //Orange
+    LightCoral: string;  //CoralPink
+    MediumSlateBlue: string;  //BrightPurple
+    DeepSkyBlue: string; //AquaBlue
+    BrilliantRose: string;  //HotPink
+
+    DefaultBlue: string;
+    HotPink: string;
+    AquaBlue: string;
+    BrightPurple: string;
+    CoralPink: string;
+    Orange: string;
+    Green: string;
+    LavenderPurple: string;
+    Red: string;
+    Yellow: string;
+    TealBlue: string;
+    Aqua: string;
+    Mango: string;
+    Berry: string;
+    Citrus: string;
+    Candy: string;
 }
 
 type FCAMainEvent = {
@@ -353,6 +383,7 @@ type FCAMainAPI = {
     setOptions: (options: FCAOptions) => void;
     setPostReaction: (postID: string, type: FCAPostReaction, callback?: (err: any) => void) => Promise<any>;
     setTitle: (newTitle: string, threadID: string, callback?: (err: any) => void) => Promise<any>;
+    threadColors: FCAThreadColors;
     unfriend: (userID: string, callback?: (err: any) => void) => Promise<any>;
     unsendMessage: (messageID: string, callback?: (err: any) => void) => Promise<any>;
 }
