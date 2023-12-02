@@ -265,7 +265,8 @@ type FCAOptions = {
     autoMarkDelivery?: boolean;
     autoMarkRead?: boolean;
     proxy?: any;
-    online?: boolean; string;}
+    online?: boolean;
+}
 
 type FCAThreadColors = {
     MessengerBlue: string;  //DefaultBlue
