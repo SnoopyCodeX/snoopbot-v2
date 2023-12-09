@@ -9,6 +9,10 @@ export default class JoinOrLeaveMiddleware extends SnoopBotMiddleware {
         super()
     }
 
+    public getPriority(): number {
+        return 1;
+    }
+
     public handle(next: (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => Promise<any>) {
         return async (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => {
             let whitelist = ThreadWhitelist.getThreadWhitelist()

@@ -9,6 +9,10 @@ export default class PermissionMiddleware extends SnoopBotMiddleware {
         super()
     }
 
+    public getPriority(): number {
+        return 2;
+    }
+
     public handle(next: (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => Promise<any>) {
         return async (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => {
             if(matches.length == 0) return
