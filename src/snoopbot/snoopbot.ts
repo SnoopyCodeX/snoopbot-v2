@@ -29,21 +29,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import dotenv from "dotenv"
-import { getType, multilineRegex, pipeline } from '@snoopbot/utils/utils'
-import global from '@snoopbot/global'
-import Settings from "@snoopbot/settings"
-import Logger from "@snoopbot/utils/logger"
-import Command from "@snoopbot/command"
-import Queue from "@snoopbot/queue"
 import Authenticator from "@snoopbot/auth/authenticator"
-import { readFileSync, unlinkSync } from "fs"
+import SnoopBotCommand from "@snoopbot/command"
+import Command from "@snoopbot/command"
 import SnoopBotEvent from "@snoopbot/event"
-import chalk from "chalk"
+import global from '@snoopbot/global'
+import "@snoopbot/keep-alive"
 import SnoopBotMiddleware from "@snoopbot/middleware"
+import Queue from "@snoopbot/queue"
+import Settings from "@snoopbot/settings"
 import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types"
 import Crypt from "@snoopbot/utils/crypt"
-import "@snoopbot/keep-alive"
+import Logger from "@snoopbot/utils/logger"
+import { getType, multilineRegex, pipeline } from '@snoopbot/utils/utils'
+import chalk from "chalk"
+import dotenv from "dotenv"
+import { readFileSync, unlinkSync } from "fs"
 
 const login = require('fca-unofficial')
 const figlet = require('figlet')
@@ -91,51 +92,76 @@ export default class SnoopBot {
         console.log(chalk`{bold {red ====[ {blue Made by SnoopyCodeX}} {red |} {red {blue ©️ 2023} {red |} {blue v0.0.1} {red |} {blue https://github.com/SnoopyCodeX/snoopbot-v2} ]====}}`)
         console.log()
     }
+
+    private async dynamicImport(path: string) {
+        const module = await import(path);
+        return module;
+    }
     
+    private async importAllCommands() : Promise<void> {
+        const commandsModule = await this.dynamicImport("@commands")
+
+        for(const commandClass in commandsModule) {
+            let CommandClass = commandsModule[commandClass]
+
+            if(CommandClass.prototype instanceof SnoopBotCommand) {
+                let instance = new CommandClass()
+                this.commands.push(instance)
+
+                Logger.success(`Done importing ${commandClass}!`)
+            } else {
+                Logger.error(`Class ${commandClass} does not extend SnoopBotCommand class. This class will be ignored and not added.`)
+            }
+        }
+    }
+
+    private async importAllEvents() : Promise<void> {
+        const eventsModule = await this.dynamicImport("@events")
+
+        for(const eventClass in eventsModule) {
+            let EventClass = eventsModule[eventClass]
+
+            if(EventClass.prototype instanceof SnoopBotEvent) {
+                let instance = new EventClass()
+                this.events[instance.getEventType()] = instance;
+
+                Logger.success(`Done importing ${eventClass}!`)
+            } else {
+                Logger.error(`Class ${eventClass} does not extend SnoopBotEvent class. This class will be ignored and not added.`)
+            }
+        }
+    }
+
+    private async importAllMiddlewares() : Promise<void> {
+        const middlewaresModule = await this.dynamicImport("@middlewares")
+
+        for(const middlewareClass in middlewaresModule) {
+            let MiddlewareClass = middlewaresModule[middlewareClass]
+
+            if(MiddlewareClass.prototype instanceof SnoopBotMiddleware) {
+                let instance = new MiddlewareClass()
+
+                if(instance.getPriority() >= 1) {
+                    this.commandMiddlewares.push(instance)
+                    Logger.success(`Done importing ${middlewareClass}!`)
+                } else 
+                    Logger.error(`Class ${middlewareClass} does not have a valid priority number. The range must be >= to 1 and not < 1. This middleware will be ignored and not added.`)
+            } else {
+                Logger.error(`Class ${middlewareClass} does not extend SnoopBotMiddleware class. This class will be ignored.`)
+            }
+        }
+
+        // If we have middlewares, sort it in ascending order based on their priority
+        if(this.commandMiddlewares.length > 0)
+            this.commandMiddlewares = this.commandMiddlewares.sort((a, b) => a.getPriority() - b.getPriority())
+    }
+
     /**
      * Creates a new SnoopBot instance
      * and loads facebook appstate from
      * environment variables
      */
     public constructor() {}
-
-    /**
-     * Adds new command that SnoopBot will
-     * execute.
-     * 
-     * @param command The command to be added to SnoopBot
-     */
-    public addCommand(command: Command) : void {
-        this.commands.push(command);
-    }
-
-    /**
-     * Adds a new command middleware. This middleware will be
-     * the first executed before executing the actual commands
-     * registered in SnoopBot.
-     * 
-     * @param commandMiddleware Command middleware to be added
-     */
-    public addCommandMiddleware(...commandMiddleware: Array<SnoopBotMiddleware>) : void {
-        this.commandMiddlewares.push(...commandMiddleware)
-    }
-
-    /**
-     * Listens to thread events that are triggered
-     * on specific actions in a thread
-     * 
-     * @param eventType Type of event to listen to. Refer to `SnoopBotEventType` for type of supported events.
-     * @param event Class that extends `SnoopBotEvent`, its method `SnoopBotEvent::onEvent()` will be executed when the event it's binded to is triggered.
-     * @returns void
-     */
-    public on(eventType: SnoopBotEventType, event: SnoopBotEvent) : void {
-        if(this.events[eventType] !== undefined) {
-            Logger.error(`The event ${eventType} is already being listened to!`)
-            return
-        }
-
-        this.events[eventType] = event
-    }
 
     /**
      * Initializes SnoopBot and
@@ -158,9 +184,18 @@ export default class SnoopBot {
         try {
             Logger.muted('Logging in...')
             
-            Authenticator.authenticate(this.login_retry_count > 0).then(() => {
+            Authenticator.authenticate(this.login_retry_count > 0).then(async () => {
                 const cookie = Crypt.decrypt(readFileSync(`${process.cwd()}/state.session`, "utf-8"));
                 const decryptedCookie = Buffer.from(cookie, 'base64').toString('utf-8');
+
+                Logger.muted("Importing all commands...");
+                await this.importAllCommands();
+
+                Logger.muted("Importing all events...");
+                await this.importAllEvents();
+
+                Logger.muted("Importing all middlewares...");
+                await this.importAllMiddlewares();
 
                 login({ appState: JSON.parse(decryptedCookie) }, (error: any, api: FCAMainAPI) => {
                     if(error) {
@@ -172,7 +207,7 @@ export default class SnoopBot {
                         }
                         
                         Logger.muted("Deleting stored cookie...")
-                        unlinkSync(`${process.cwd()}/session.state`)
+                        unlinkSync(`${process.cwd()}/state.session`)
 
                         Logger.muted("Trying to reauthenticate...")
                         this.login_retry_count++
