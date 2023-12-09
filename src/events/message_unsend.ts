@@ -8,6 +8,10 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
         super()
     }
 
+    public getEventType() : SnoopBotEventType {
+        return "message:unsend"
+    }
+
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         let messageID = event.messageID!;
         let threadID = event.threadID;

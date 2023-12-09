@@ -38,6 +38,10 @@ export default class SnoopBotEvent {
     public constructor()
     {}
 
+    public getEventType() : SnoopBotEventType {
+        return "gc:member_join"
+    }
+
     /**
      * Executed when the event it's binded to is triggered.
      * 

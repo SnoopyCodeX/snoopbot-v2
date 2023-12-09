@@ -39,6 +39,10 @@ export default class MemberJoinEvent extends SnoopBotEvent {
         }
     }
 
+    public getEventType() : SnoopBotEventType {
+        return "gc:member_join"
+    }
+
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Ignore threads that are not whitelisted
         let threadWhitelist = ThreadWhitelist.getThreadWhitelist()

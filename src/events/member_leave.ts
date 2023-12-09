@@ -12,6 +12,10 @@ export default class MemberLeaveEvent extends SnoopBotEvent {
         super()
     }
 
+    public getEventType() : SnoopBotEventType {
+        return "gc:member_leave"
+    }
+
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Ignore threads that are not whitelisted
         let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
