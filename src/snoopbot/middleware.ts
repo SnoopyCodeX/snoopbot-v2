@@ -38,6 +38,10 @@ export default class SnoopBotMiddleware {
     constructor()
     {}
 
+    public getPriority() : number {
+        return 1;
+    } 
+
     /**
      * Handles the current request
      * 
