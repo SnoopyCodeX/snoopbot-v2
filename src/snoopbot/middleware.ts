@@ -38,6 +38,15 @@ export default class SnoopBotMiddleware {
     constructor()
     {}
 
+    /**
+     * Returns the priority number of
+     * this middleware.
+     * 
+     * A middleware with a priority number
+     * of 1 will be the highest.
+     * 
+     * @returns {number}
+     */
     public getPriority() : number {
         return 1;
     } 

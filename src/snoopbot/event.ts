@@ -38,6 +38,12 @@ export default class SnoopBotEvent {
     public constructor()
     {}
 
+    /**
+     * Returns the type of event
+     * that this event handler is binded to.
+     * 
+     * @return {SnoopBotEventType}
+     */
     public getEventType() : SnoopBotEventType {
         return "gc:member_join"
     }
