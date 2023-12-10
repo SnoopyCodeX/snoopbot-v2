@@ -36,11 +36,13 @@ const eventsQueue = new Queue(1, "EventsQueue")
 const imageSearchQueue = new Queue(1, "ImageSearchQueue")
 const pinMessageQueue = new Queue(1, "PinMessageQueue")
 const helpQueue = new Queue(1, "HelpQueue")
+const startTime = Date.now()
 
 export default {
     playerQueue,
     eventsQueue,
     imageSearchQueue,
     pinMessageQueue,
-    helpQueue
+    helpQueue,
+    startTime
 }
