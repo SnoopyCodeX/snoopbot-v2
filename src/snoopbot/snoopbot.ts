@@ -31,7 +31,6 @@
 
 import Authenticator from "@snoopbot/auth/authenticator"
 import SnoopBotCommand from "@snoopbot/command"
-import Command from "@snoopbot/command"
 import SnoopBotEvent from "@snoopbot/event"
 import global from '@snoopbot/global'
 import "@snoopbot/keep-alive"
@@ -42,9 +41,12 @@ import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types"
 import Crypt from "@snoopbot/utils/crypt"
 import Logger from "@snoopbot/utils/logger"
 import { getType, multilineRegex, pipeline } from '@snoopbot/utils/utils'
+import ansiColors from "ansi-colors"
 import chalk from "chalk"
+import cliProgress from "cli-progress"
 import dotenv from "dotenv"
 import { readFileSync, unlinkSync } from "fs"
+import cron from "node-cron"
 
 const login = require('fca-unofficial')
 const figlet = require('figlet')
@@ -54,7 +56,7 @@ export default class SnoopBot {
     private MAX_LOGIN_RETRY: number = 3
     private login_retry_count: number = 0
 
-    private commands: Array<Command> = []
+    private commands: Array<SnoopBotCommand> = []
     private events: SnoopBotThreadEvent = {}
     private commandMiddlewares: Array<SnoopBotMiddleware> = []
     private queue: Queue = new Queue(10, "GlobalQueue")
@@ -100,23 +102,55 @@ export default class SnoopBot {
     
     private async importAllCommands() : Promise<void> {
         const commandsModule = await this.dynamicImport("@commands")
+        const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
+        if(Object.entries(commandsModule).length === 0) {
+            Logger.error("No commands to import. To make one, please refer to the docs here https://snoopycodex.github.io/snoopbot-v2/DOCS.html")
+            Logger.error("Terminating self...")
+            process.exit(process.exit(134))
+        }
+
+        const progress = new cliProgress.SingleBar({
+            format: ansiColors.magentaBright('[SnoopBot]: ') + ansiColors.yellowBright('Import progress [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}'),
+            hideCursor: true,
+            forceRedraw: true,
+            clearOnComplete: true
+        }, cliProgress.Presets.rect)
+        progress.start(Object.entries(commandsModule).length, 0)
+        
         for(const commandClass in commandsModule) {
             let CommandClass = commandsModule[commandClass]
 
             if(CommandClass.prototype instanceof SnoopBotCommand) {
                 let instance = new CommandClass()
                 this.commands.push(instance)
-
-                Logger.success(`Done importing ${commandClass}!`)
             } else {
                 Logger.error(`Class ${commandClass} does not extend SnoopBotCommand class. This class will be ignored and not added.`)
             }
+
+            progress.increment(1)
+            await delay(600)
         }
+
+        progress.stop()
     }
 
     private async importAllEvents() : Promise<void> {
         const eventsModule = await this.dynamicImport("@events")
+        const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
+
+        if(Object.entries(eventsModule).length === 0) {
+            Logger.warn("No events to import. To make one, please refer to the docs here https://snoopycodex.github.io/snoopbot-v2/DOCS.html")
+            return
+        }
+
+        const progress = new cliProgress.SingleBar({
+            format: ansiColors.magentaBright('[SnoopBot]: ') + ansiColors.yellowBright('Import progress [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}'),
+            hideCursor: true,
+            forceRedraw: true,
+            clearOnComplete: true
+        }, cliProgress.Presets.rect)
+        progress.start(Object.entries(eventsModule).length, 0)
 
         for(const eventClass in eventsModule) {
             let EventClass = eventsModule[eventClass]
@@ -124,16 +158,33 @@ export default class SnoopBot {
             if(EventClass.prototype instanceof SnoopBotEvent) {
                 let instance = new EventClass()
                 this.events[instance.getEventType()] = instance;
-
-                Logger.success(`Done importing ${eventClass}!`)
             } else {
                 Logger.error(`Class ${eventClass} does not extend SnoopBotEvent class. This class will be ignored and not added.`)
             }
+
+            progress.increment(1)
+            await delay(600)
         }
+
+        progress.stop()
     }
 
     private async importAllMiddlewares() : Promise<void> {
         const middlewaresModule = await this.dynamicImport("@middlewares")
+        const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
+
+        if(Object.entries(middlewaresModule).length === 0) {
+            Logger.warn("No middlewares to import. To make one, please refer to the docs here https://snoopycodex.github.io/snoopbot-v2/DOCS.html")
+            return
+        }
+
+        const progress = new cliProgress.SingleBar({
+            format: ansiColors.magentaBright('[SnoopBot]: ') + ansiColors.yellowBright('Import progress [{bar}] {percentage}% | ETA: {eta}s | {value}/{total}'),
+            hideCursor: true,
+            forceRedraw: true,
+            clearOnComplete: true
+        }, cliProgress.Presets.rect)
+        progress.start(Object.entries(middlewaresModule).length, 0)
 
         for(const middlewareClass in middlewaresModule) {
             let MiddlewareClass = middlewaresModule[middlewareClass]
@@ -141,19 +192,23 @@ export default class SnoopBot {
             if(MiddlewareClass.prototype instanceof SnoopBotMiddleware) {
                 let instance = new MiddlewareClass()
 
-                if(instance.getPriority() >= 1) {
+                if(instance.getPriority() >= 1)
                     this.commandMiddlewares.push(instance)
-                    Logger.success(`Done importing ${middlewareClass}!`)
-                } else 
+                else 
                     Logger.error(`Class ${middlewareClass} does not have a valid priority number. The range must be >= to 1 and not < 1. This middleware will be ignored and not added.`)
             } else {
                 Logger.error(`Class ${middlewareClass} does not extend SnoopBotMiddleware class. This class will be ignored.`)
             }
+
+            progress.increment(1)
+            await delay(600)
         }
 
         // If we have middlewares, sort it in ascending order based on their priority
         if(this.commandMiddlewares.length > 0)
             this.commandMiddlewares = this.commandMiddlewares.sort((a, b) => a.getPriority() - b.getPriority())
+
+        progress.stop()
     }
 
     /**
@@ -229,7 +284,7 @@ export default class SnoopBot {
                         ...apiOptions,
                     })
     
-                    Logger.muted('Listening for messages...')
+                    Logger.info('Listening for messages...')
     
                     api.listen(async (error: any, event: FCAMainEvent) => {
                         if(error) return Logger.error(`Listening failed, cause: ${error}`)
@@ -350,10 +405,6 @@ export default class SnoopBot {
                         settings = Settings.getSettings()
                         const threadSettings = settings.threads[event.threadID] || settings.defaultSettings
                         prefix = threadSettings.prefix
-
-                        if(this.commands.length == 0) {
-                            return Logger.error('No commands added. Please add at least 1 command')
-                        }
     
                         this.commands.forEach((command) => {
                             if(command.options.name === undefined) {
@@ -393,6 +444,21 @@ export default class SnoopBot {
                                 }
                             }
                         })
+                    })
+
+                    // Every 1 hour, delete half of the entries of `this.messages` object
+                    cron.schedule("0 * * * *", () => {
+                        let half = Object.entries(this.messages).length / 2
+                        let counter = 1
+
+                        for(let messageID in this.messages) {
+                            if((counter + 1) > half) break
+
+                            const {[messageID]: _, ...rest} = this.messages
+                            this.messages = rest
+
+                            counter += 1
+                        }
                     })
                 })
             });
