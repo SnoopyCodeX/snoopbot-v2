@@ -29,16 +29,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import puppeteer, { Browser } from "puppeteer"
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import { existsSync, writeFileSync } from "fs";
+import puppeteer, { Browser } from "puppeteer";
 
-import Logger from "../utils/logger";
 import Crypt from "../utils/crypt";
+import Logger from "../utils/logger";
 dotenv.config()
 
-const { exec } = require("node:child_process")
-const { promisify } = require("node:util")
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
 
 export default class Authenticator {
     public constructor() {}
