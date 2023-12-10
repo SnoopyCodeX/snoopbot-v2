@@ -69,7 +69,7 @@ CRYPT_SECRET_KEY='mysupersecretkey'
 
 ⚠️ **Only use <ins>dummy facebook account</ins> for this bot, I will not be responsible for when facebook marks your account as spam or bans your account** ⚠️
 
-Then find delete the existing <kbd><samp>state.session</samp></kbd> file in the root directory of the project so that SnoopBot will create a new one for you
+Then find and delete the existing <kbd><samp>state.session</samp></kbd> file in the root directory of the project so that SnoopBot will create a new one for you
 based on your facebook account credentials.
 
 ## 🤖 Initializing SnoopBot
