@@ -2,9 +2,10 @@
 
 This is the official documentation of SnoopBot. SnoopBot is a facebook messenger chatbot made with Typescript, NodeJS, Express, PuppeteerJS and the Unofficial Facebook API.
 
-## Table of Contents
+## 📋 Table of Contents
 - Getting Started
     - [Setting up](#setting-up)
+    - [Configuring Environment Variable](#configuring-environment-variable)
     - [Initializing SnoopBot](#initializing-snoopbot)
     - [SnoopBot CLI Tool](#snoopbot-cli-tool)
 - Commands
@@ -16,26 +17,64 @@ This is the official documentation of SnoopBot. SnoopBot is a facebook messenger
     - [Types of events](#snoopbot-event-types)
 - Middlewares
     - [Creating new middleware](#creating-new-middleware)
+- [Contributing](#contributing)
+- [Credits](#credits)
+- [License](#license)
 
-## Setting Up
+## 🛠️ Setting Up
 
-First, _(if you haven't yet)_, install the dependencies:
+First, clone this repository:
+
+```bash
+git clone https://github.com/SnoopyCodeX/snoopbot-v2
+```
+
+After that, you may then open the cloned project in your VSCode.
+
+Then, _(if you haven't yet)_, install the dependencies. Open your VSCode's built-in terminal and type the following:
 
 ```bash
 npm install
 ```
 
-Then build the project:
+Then run the build script like so:
 
 ```bash
 npm run build
 ```
 
-This will also build SnoopBot's built-in CLI tool in which we will tackle later on.
+This will build SnoopBot’s built-in CLI tool in which we will tackle later on.
 
-## Initializing SnoopBot
+## 📝 Configuring Environment Variable
 
-Open _(or create if there's none)_ `src/index.ts` and write this:
+Find <kbd><samp>.env.development</samp></kbd> in the root directory of the project and rename it to <kbd><samp>.env</samp></kbd>. Open it and change the values of the following:
+
+```bash
+# For facebook authentication
+# Add your facebook account email and password here
+FB_EMAIL=
+FB_PASS=
+
+# For downloading profile picture using facebook's api
+# One of SnoopBot's feature needs to download a user's profile picture using
+# facebook graph api. Go to https://developers.facebook.com to get yours.
+FB_ACCESS_TOKEN=
+
+# Set this to false if you're deploying this to replit.com
+IS_LOCAL=true
+
+# Your secret key for encrypting/decrypting the `state.session` file
+CRYPT_SECRET_KEY='mysupersecretkey'
+```
+
+⚠️ **Only use <ins>dummy facebook account</ins> for this bot, I will not be responsible for when facebook marks your account as spam or bans your account** ⚠️
+
+Then find delete the existing <kbd><samp>state.session</samp></kbd> file in the root directory of the project so that SnoopBot will create a new one for you
+based on your facebook account credentials.
+
+## 🤖 Initializing SnoopBot
+
+Open <kbd><samp>src/index.ts</samp></kbd> and you will see this:
 
 ```typescript
 import 'module-alias/register' // <--- This must always be at the top. DO NOT REMOVE!
@@ -99,20 +138,19 @@ Example:
 snoopbot cli -a create:command -n play
 ```
 
-This will generate a new file for you located in `src/commands` folder. The code will look like this:
+This will generate a new file for you located in <kbd><samp>src/commands</samp></kbd> folder. The code will look like this:
 
 ```typescript
 import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 import { SnoopBotCommand } from "@snoopbot";
 
 export default class PlayCommand extends SnoopBotCommand {
-    public constructor(options?: SnoopBotCommandOptions) {
+    public constructor() {
         super({
             name: "play",
             params: "^play\\s(.*)",
             description: "My awesome command",
-            usage: "play <args>",
-            ...options
+            usage: "play <args>"
         })
     }
 
@@ -148,27 +186,7 @@ And here are the following options that you may define in your command's constru
 | `prefix` | `string` | The prefix to be used for this command. The default is `/`. |
 | `hasArgs` | `boolean` | Set this to `true` if your command accepts arguments. |
 
-Once you're done configuring your new command, you may now import it and add it to SnoopBot in your `src/index.ts` file like so:
-
-```typescript
-import 'module-alias/register'
-import { SnoopBot } from "@snoopbot"
-
-// Import all commands
-import * as commands from "@commands"
-
-// Initialize SnoopBot
-const bot = new SnoopBot()
-bot.init({
-    selfListen: true,
-    debugMode: true
-})
-
-// Add the command
-bot.addCommand(new commands.PlayCommand())
-```
-
-By the default, the prefix for every commands is `/`.
+By the default, the prefix for every commands is <kbd><samp>/</samp></kbd>.
 
 ## Creating new event handler
 
@@ -188,7 +206,7 @@ Example:
 snoopbot cli -a create:event -n MyNewEvent
 ```
 
-This will generate a new file for you located in `src/events` folder. The code will look like this:
+This will generate a new file for you located in <kbd><samp>src/events</samp></kbd> folder. The code will look like this:
 
 ```typescript
 import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
@@ -198,6 +216,10 @@ export default class MyNewEvent extends SnoopBotEvent {
     public constructor()
     {
         super()
+    }
+
+    public getEventType() : SnoopBotEventType {
+        return "gc:member_join"
     }
 
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
@@ -222,17 +244,17 @@ Inside the `onEvent()` method is where you will handle the received event. After
 
 ### Binding event handler to an event
 
-First that you need to do is import all events from `src/events` folder in your `src/index.ts` file like so:
+You just have to change the return value of the method `getEventType()` like so:
 
 ```typescript
-import * as events from "@events"
+public getEventType() : SnoopBotEventType {
+    return "event-type-here"
+}
 ```
 
-Then you may then bind it to a specific event in SnoopBot like so:
+Refer to the table above for the types of event that you may bind your event handler to.
 
-```typescript
-bot.on("message:unsend", new events.MyNewEvent())
-```
+⚠️ **You may only bind <ins>ONE EVENT HANDLER</ins> to <ins>ONE TYPE OF EVENT</ins> ⚠️**
 
 ## Creating new middleware
 
@@ -254,7 +276,7 @@ Example:
 snoopbot cli -a create:middleware -n MyNewMiddleware
 ```
 
-This will generate a new file for you located in `src/middlewares` folder. The code will look like this:
+This will generate a new file for you located in <kbd><samp>src/middlewares</samp></kbd> folder. The code will look like this:
 
 ```typescript
 import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
@@ -264,6 +286,10 @@ export default class MyNewMiddleware extends SnoopBotMiddleware {
     constructor()
     {
         super()
+    }
+
+    public getPriority(): number {
+        return 1;
     }
 
     public handle(next: (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => Promise<any>) {
@@ -276,34 +302,57 @@ export default class MyNewMiddleware extends SnoopBotMiddleware {
 }
 ```
 
+The `getPriority()` method returns the middleware's priority number. A middleware with a priority number of `1` will be the highest and will be the first middleware to be executed and a middleware with the **<ins>highest priority number</ins>** will be the last to be executed.
+
 The `handle()` method is where you will be coding what you wanna do before executing the commands. The `next()` method will call the next middleware or proceed to the command if no other middlewares are there to be called.
 
 The process looks like this:
 
 ```
 
-[message] --> [middleware1 --> middleware2, ...] --> commands 
+[incoming message] --> [middleware1 --> middleware2, ...] --> commands 
 
 ```
 
-After configuring your new middleware, you may then import it in `src/index.ts`:
+## ℹ️ Contributing
 
-```typescript
-import * as middlewares from "@middlewares"
+You may fork this repository and create a pull request. See the [Docs](./DOCS.md) on how to work with this repository.
+
+## 🌟 Credits
+
+- [Jerson Carin](https://github.com/jersoncarin)
+- [itsmenewbie03](https://github.com/itsmenewbie03)
+- [Unofficial Facebook API](https://github.com/VangBanLaNhat/fca-unofficial)
+
+## 🪪 License
 ```
+BSD 3-Clause License
 
-Then add it to SnoopBot:
+Copyright (c) 2023, SnoopyCodeX
 
-```typescript
-bot.addCommandMiddleware(new middlewares.MyNewMiddleware())
-```
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-The `addCommandMiddleware()` method accepts an array of middlewares and are executed in the order that they were added. Example:
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
 
-```typescript
-bot.addCommandMiddleware(
-    new middlewares.MyMiddleware1(),
-    new middlewares.MyMiddleware2(),
-    new middlewares.MyMiddleware3()
-)
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 ```
