@@ -21,16 +21,16 @@ export default class PermissionMiddleware extends SnoopBotMiddleware {
             let admins = threadAdmins.hasError ? [] : threadAdmins.admins!
             let command = matches[0].split(" ")[0]
 
-            if(!PermissionUtil.userHasPermission(event.threadID, event.senderID!, command)) {
-                let message = "⚠️You do not have permission to use this command."
-                api.sendMessage(message, event.threadID, event.messageID);
+            if(!admins.includes(event.senderID!) && (event.senderID! !== threadAdmins.botOwner) && !!extra.adminOnly!) {
+                let message = `⚠️This command is for bot administrators only!`
+                api.sendMessage(message, event.threadID, event.messageID)
 
                 return
             }
 
-            if(!admins.includes(event.senderID!) && (event.senderID! !== threadAdmins.botOwner) && !!extra.adminOnly!) {
-                let message = `⚠️This command is for bot administrators only!`
-                api.sendMessage(message, event.threadID, event.messageID)
+            if(!PermissionUtil.userHasPermission(event.threadID, event.senderID!, command)) {
+                let message = "⚠️You do not have permission to use this command."
+                api.sendMessage(message, event.threadID, event.messageID);
 
                 return
             }
