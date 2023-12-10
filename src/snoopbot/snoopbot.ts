@@ -448,17 +448,11 @@ export default class SnoopBot {
 
                     // Every 1 hour, delete half of the entries of `this.messages` object
                     cron.schedule("0 * * * *", () => {
-                        let half = Object.entries(this.messages).length / 2
-                        let counter = 1
+                        let entries = Object.entries(this.messages)
+                        let half = Math.floor(entries.length / 2)
 
-                        for(let messageID in this.messages) {
-                            if((counter + 1) > half) break
-
-                            const {[messageID]: _, ...rest} = this.messages
-                            this.messages = rest
-
-                            counter += 1
-                        }
+                        let remaining = Object.fromEntries(entries.slice(0, half))
+                        this.messages = remaining
                     })
                 })
             });
