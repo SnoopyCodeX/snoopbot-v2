@@ -187,6 +187,9 @@ export default class PermissionCommand extends SnoopBotCommand {
             }
 
             let threadInfo = await api.getThreadInfo(event.threadID);
+            let threadAdmins = AdminUtils.getThreadAdmins(event.threadID)
+            let botOwner = threadAdmins.botOwner
+            let botID = await api.getCurrentUserID();
             let { participantIDs } = threadInfo;
 
             participantIDs.forEach((participantID: any) => {
@@ -197,6 +200,8 @@ export default class PermissionCommand extends SnoopBotCommand {
                         userInfo = uinfo;
                         break;
                     }
+
+                if(userInfo.id === botID || userInfo.id === botOwner) return;
 
                 persons[userInfo.id] = `@${userInfo.name}`;
             });
@@ -257,6 +262,9 @@ export default class PermissionCommand extends SnoopBotCommand {
             }
 
             let threadInfo = await api.getThreadInfo(event.threadID);
+            let threadAdmins = AdminUtils.getThreadAdmins(event.threadID)
+            let botOwner = threadAdmins.botOwner
+            let botID = await api.getCurrentUserID();
             let { participantIDs } = threadInfo;
             participantIDs.forEach((participantID: any) => {
                 let userInfo: any;
@@ -266,6 +274,8 @@ export default class PermissionCommand extends SnoopBotCommand {
                         userInfo = uinfo;
                         break;
                     }
+
+                if(userInfo.id === botID || userInfo.id === botOwner) return;
 
                 persons[userInfo.id] = `@${userInfo.name}`;
             });
