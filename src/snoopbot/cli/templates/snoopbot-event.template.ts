@@ -38,6 +38,28 @@ export default class <NAME> extends SnoopBotEvent {
         super()
     }
 
+    /**
+     * Returns the type of event
+     * that this event handler is binded to.
+     *
+     * You may only bind one event handler to
+     * one event type. 
+     *
+     * See list of event types here: 
+     * https://snoopycodex.github.io/snoopbot-v2/DOCS.html#snoopbot-event-types
+     *
+     * @return {SnoopBotEventType}
+     */
+    public getEventType() : SnoopBotEventType {
+        return "gc:member_join"
+    }
+
+    /**
+     * Executed when the event it's binded to is triggered.
+     * 
+     * @param {FCAMainEvent} event The event received. See `https://github.com/VangBanLaNhat/fca-unofficial`.
+     * @param {FCAMainAPI} api The facebook chat api. See `https://github.com/VangBanLaNhat/fca-unofficial`.
+     */
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Do something...
     }

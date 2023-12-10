@@ -38,6 +38,24 @@ export default class <NAME> extends SnoopBotMiddleware {
         super()
     }
 
+    /**
+     * Returns the priority number of
+     * this middleware.
+     * 
+     * A middleware with a priority number
+     * of 1 will be the highest.
+     * 
+     * @returns {number}
+     */
+    public getPriority() : number {
+        return 1;
+    }
+
+    /**
+     * Handles the current request
+     * 
+     * @param next 
+     */
     public handle(next: (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => Promise<any>) {
         return async (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => {
             // Do something in here...

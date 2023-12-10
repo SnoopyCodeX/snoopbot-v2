@@ -33,16 +33,26 @@ import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 import { SnoopBotCommand } from "@snoopbot";
 
 export default class <NAME> extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    /**
+     * @property options `SnoopBotCommandOptions` the options that are specified for the command.
+     */
+    constructor() {
         super({
             name: '<options-NAME>',
             params: '^<options-NAME>\\s(.*)',
             description: 'My awesome command',
-            usage: '<options-NAME> <args>',
-            ...options
+            usage: '<options-NAME> <args>'
         })
     }
 
+    /***
+     * Executed when the command's regex pattern matches the received message.
+     * 
+     * @param {any[]} matches An array of message pieces that matched the defined regex for the command.
+     * @param {FCAMainEvent} event The event received. See `https://github.com/VangBanLaNhat/fca-unofficial`.
+     * @param {FCAMainAPI} api The facebook chat api. See `https://github.com/VangBanLaNhat/fca-unofficial`.
+     * @param {SnoopBotCommandExtras} extras `SnoopBotCommandExtras` this contains the options that are declared in the command.
+     */
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
         // This is where you'll process the command
         api.sendMessage('This is a new command!', event.threadID);    
