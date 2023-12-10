@@ -51,45 +51,44 @@ export default class UptimeCommand extends SnoopBotCommand {
     }
     
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
-        const { startTime } = extras.global;
-        const elapsedTime = Math.round((Date.now() - startTime) / 1000);
+        const elapsedTime = Math.floor(process.uptime());
         let message = "🤖SnoopBot has been up for ";
 
         if(elapsedTime < this.MINUTES)
             message += `${elapsedTime} seconds.`
         else if(elapsedTime >= this.MINUTES && elapsedTime < this.HOUR) {
             let minutes = Math.round(elapsedTime / this.MINUTES);
-            let seconds = Math.round(elapsedTime % this.MINUTES);
+            let seconds = Math.round(elapsedTime % this.SECONDS);
 
             message += `${minutes} minute${minutes > 1 ? "s" : ""} and ${seconds} second${seconds > 1 ? "s" : ""}.` 
         } else if (elapsedTime >= this.HOUR && elapsedTime < this.DAY) {
             let hours = Math.round(elapsedTime / this.HOUR);
-            let minutes = Math.round(elapsedTime % this.HOUR);
-            let seconds = Math.round(minutes % this.MINUTES);
+            let minutes = Math.round(elapsedTime % this.MINUTES);
+            let seconds = Math.round(minutes % this.SECONDS);
 
             message += `${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${minutes > 1 ? "s" : ""} and ${seconds} second${seconds > 1 ? "s" : ""}.`
         } else if (elapsedTime >= this.DAY && elapsedTime < this.MONTH) {
             let days = Math.round(elapsedTime / this.DAY);
-            let hours = Math.round(elapsedTime % this.DAY);
-            let minutes = Math.round(hours % this.HOUR);
-            let seconds = Math.round(minutes % this.MINUTES);
+            let hours = Math.round(elapsedTime % this.HOUR);
+            let minutes = Math.round(hours % this.MINUTES);
+            let seconds = Math.round(minutes % this.SECONDS);
 
             message += `${days} day${days > 1 ? "s" : ""} ${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${minutes > 1 ? "s" : ""} and ${seconds} second${seconds > 1 ? "s" : ""}.`
         } else if (elapsedTime >= this.MONTH && elapsedTime < this.YEAR) {
             let months = Math.round(elapsedTime / this.MONTH);
-            let days = Math.round(elapsedTime % this.MONTH);
-            let hours = Math.round(days % this.DAY);
-            let minutes = Math.round(hours % this.HOUR);
-            let seconds = Math.round(minutes % this.MINUTES);
+            let days = Math.round(elapsedTime % this.DAY);
+            let hours = Math.round(days % this.HOUR);
+            let minutes = Math.round(hours % this.MINUTES);
+            let seconds = Math.round(minutes % this.SECONDS);
 
             message += `${months} month${months > 1 ? "s" : ""} ${days} day${days > 1 ? "s" : ""} ${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${minutes > 1 ? "s" : ""} and ${seconds} second${seconds > 1 ? "s" : ""}.`
         } else if (elapsedTime >= this.YEAR) {
             let years = Math.round(elapsedTime / this.YEAR);
-            let months = Math.round(elapsedTime % this.YEAR);
-            let days = Math.round(months % this.MONTH);
-            let hours = Math.round(days % this.DAY);
-            let minutes = Math.round(hours % this.HOUR);
-            let seconds = Math.round(minutes % this.MINUTES);
+            let months = Math.round(elapsedTime % this.MONTH);
+            let days = Math.round(months % this.DAY);
+            let hours = Math.round(days % this.HOUR);
+            let minutes = Math.round(hours % this.MINUTES);
+            let seconds = Math.round(minutes % this.SECONDS);
 
             message += `${years} year${years > 1 ? "s" : ""} ${months} month${months > 1 ? "s" : ""} ${days} day${days > 1 ? "s" : ""} ${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${minutes > 1 ? "s" : ""} and ${seconds} second${seconds > 1 ? "s" : ""}.`
         }
