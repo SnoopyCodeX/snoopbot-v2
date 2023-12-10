@@ -99,14 +99,14 @@ export class AdminUtils {
 }
 
 export default class AdminCommand extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    constructor() {
         super({
             name: 'admin',
             params: '^admin\\s(promote|demote|list)\\s?(.*)?',
             usage: 'admin <promote|demote|list> <@you | @person1, @person2, ...>',
             description: 'Promote/Demote/List admins of this chatbot',
             hasArgs: true,
-            ...options
+            adminOnly: true
         })
     }
 

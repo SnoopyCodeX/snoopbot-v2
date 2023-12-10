@@ -2,13 +2,12 @@ import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 import { SnoopBotCommand, Settings } from "@snoopbot";
 
 class HelpCommand extends SnoopBotCommand {
-    public constructor(options?: SnoopBotCommandOptions) {
+    public constructor() {
         super({
             name: 'help',
             params: '^help\\s?(.*)?',
             usage: 'help',
-            description: 'Shows a list of available commands',
-            ...options
+            description: 'Shows a list of available commands'
         })
     }
 

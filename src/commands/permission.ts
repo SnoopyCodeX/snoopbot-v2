@@ -140,14 +140,14 @@ export class PermissionUtil {
 }
 
 export default class PermissionCommand extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    constructor() {
         super({
             name: 'permission',
             params: '^permission\\s(grant|revoke|list)\\s([^@]+)\\s?(.*)?',
             description: 'Grant, revoke or list permission',
             usage: 'permission <grant|revoke|list> <all | command1, ...> <@all | @person1, ....>',
             hasArgs: true,
-            ...options
+            adminOnly: true
         });
     }
 

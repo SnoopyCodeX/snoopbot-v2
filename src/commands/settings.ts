@@ -2,14 +2,14 @@ import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 import { Settings, SnoopBotCommand } from "@snoopbot";
 
 export default class SettingsCommand extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    constructor() {
         super({
             name: 'settings',
             params: '^settings\\s(.*)',
             usage: 'settings <list | bot-option> <value>',
             description: 'Update/list this bot\'s settings in the current thread',
             hasArgs: true,
-            ...options
+            adminOnly: true
         })
     }
 

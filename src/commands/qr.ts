@@ -7,13 +7,12 @@ import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 dotenv.config()
 
 export default class QRCodeCommand extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    constructor() {
         super({
             name: 'qr-code',
             params: '^qr\\-code\\s(.*)',
             usage: 'qr-code <text to encode>',
-            description: 'Generates a qr code based on the text you provide',
-            ...options
+            description: 'Generates a qr code based on the text you provide'
         })
     }
 

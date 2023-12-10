@@ -19,13 +19,13 @@ export class ThreadWhitelist {
 }
 
 export default class JoinOrLeaveCommand extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    constructor() {
         super({
             name: "join_or_leave",
             params: "^(join|leave)",
             usage: "<join|leave>",
             description: "Allows snoopbot to respond or ignore a thread",
-            ...options
+            adminOnly: true
         });
     }
 

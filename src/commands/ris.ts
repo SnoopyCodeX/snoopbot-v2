@@ -4,13 +4,12 @@ import { Downloader, SnoopBotCommand } from "@snoopbot";
 import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 
 export default class ReverseImageSearchCommand extends SnoopBotCommand {
-    constructor(options?: SnoopBotCommandOptions) {
+    constructor() {
         super({
             params: "^reverse\\-image\\-search(.*)?",
             usage: "reverse-image-search <optional: url of image>",
             description: "Performs a reverse image search of the provided image url or the replied image",
-            name: "reverse-image-search",
-            ...options
+            name: "reverse-image-search"
         })
     }
 

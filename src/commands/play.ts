@@ -2,13 +2,12 @@ import { FCAMainAPI, FCAMainEvent } from "@snoopbot/types/fca-types";
 import { SnoopBotCommand, Downloader } from "@snoopbot";
 
 export default class PlayCommand extends SnoopBotCommand {
-    public constructor(options?: SnoopBotCommandOptions) {
+    public constructor() {
         super({
             params: "^play\\s(.*)",
             name: "play",
             usage: "play <song title>",
-            description: "Play a song from youtube",
-            ...options
+            description: "Play a song from youtube"
         })
     }
 
