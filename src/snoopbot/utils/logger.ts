@@ -47,6 +47,14 @@ export default class Logger {
                 logMessageContent = chalk.greenBright(message)
                 break
 
+            case 'warn':
+                logMessageContent = chalk.yellowBright(message)
+                break;
+
+            case 'info':
+                logMessageContent = chalk.cyanBright(message)
+                break
+
             case 'error':
                 logMessageContent = chalk.redBright(message)
                 break
@@ -61,6 +69,14 @@ export default class Logger {
     
     public static error(message: string) : void {
         Logger.log(message, 'error')
+    }
+
+    public static warn(message: string) : void {
+        Logger.log(message, 'warn')
+    }
+    
+    public static info(message: string) : void {
+        Logger.log(message, 'info')
     }
 
     public static muted(message: string) : void {

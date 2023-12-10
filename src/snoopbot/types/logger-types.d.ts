@@ -1,1 +1,1 @@
-type LoggerType = "muted" | "success" | "error"
+type LoggerType = "muted" | "success" | "error" | "warn" | "info"
