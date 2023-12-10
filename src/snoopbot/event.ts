@@ -41,6 +41,12 @@ export default class SnoopBotEvent {
     /**
      * Returns the type of event
      * that this event handler is binded to.
+     *
+     * You may only bind one event handler to
+     * one event type. 
+     * 
+     * See list of event types here: 
+     * https://snoopycodex.github.io/snoopbot-v2/DOCS.html#snoopbot-event-types
      * 
      * @return {SnoopBotEventType}
      */
