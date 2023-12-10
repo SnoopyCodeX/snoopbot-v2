@@ -14,7 +14,7 @@
 
 ## Available commands of SnoopBot
 | Command | Usage | Description |
-|:-------:|:-----:|:-----------:|
+|:-------:|:-----:|:------------|
 | `/play` | `/play <song>` | Searches for the song and sends it to the thread |
 | `/qr-code` | `/qr-code <text>` | Encodes a text into a qr code and sends it to the thread |
 | `/ris` | `/ris <image-url: optional>` | Perform a reverse image search and sends the result to the thread |
@@ -22,7 +22,7 @@
 
 ## Commands that only bot administrators can use
 | Command | Usage | Description |
-|:-------:|:-----:|:-----------:|
+|:-------:|:-----:|:------------|
 | `/admin` | `/admin <promote\|demote\|list> <@you \| [@person1, @person2...]>` | Promotes/Demotes user(s) as bot administrators in the thread or list bot administrators in the thread |
 | `/join` | `/join` | Adds the current thread to the whitelist. Threads that are not in the whitelist will be ignored by SnoopBot and will not respond to any commands **unless** the sender is a bot administrator or owner |
 | `/leave` | `/leave` | Removes the current thread from the whitelist. |
@@ -31,7 +31,7 @@
 
 ## Automatic features of SnoopBot
 | Feature | Status | Description |
-|:-------:|:------:|:-----------:|
+|:-------:|:------:|:------------|
 | Anti Unsend | `Disabled` by default | Resends the unsent message back to the thread |
 | Auto Greet | `Disabled` by default | Automatically sends a greeting or farewell message when a user joins/leaves a thread |
 
@@ -49,7 +49,7 @@ Download dependencies
 npm install
 ```
 
-Rename `.env.development` to `.env` and configure the following:
+Rename <kbd><samp>.env.development</samp></kbd> to <kbd><samp>.env</samp></kbd> and configure the following:
 
 ```bash
 # For facebook authentication
@@ -69,7 +69,7 @@ IS_LOCAL=true
 CRYPT_SECRET_KEY='mysupersecretkey'
 ```
 
-Delete the existing `state.session` file so that SnoopBot will create a new one for you
+Delete the existing <kbd><samp>state.session</samp></kbd> file so that SnoopBot will create a new one for you
 based on your facebook account credentials.
 
 Then run:
