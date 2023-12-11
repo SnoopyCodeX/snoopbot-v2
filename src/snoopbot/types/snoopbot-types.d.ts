@@ -60,10 +60,11 @@ type SnoopBotEventType =
      'gc:change_theme' | 
      'gc:change_name' |
      'user:change_nickname' | 
-     'message:unsend'
+     'message:unsend' |
+     'message:send' 
 
 type SnoopBotThreadEvent = {
-    [key: string]: SnoopBotEvent;
+    [key: string]: SnoopBotEvent[];
 }
 
 type MessageType = {

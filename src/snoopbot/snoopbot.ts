@@ -157,7 +157,13 @@ export default class SnoopBot {
 
             if(EventClass.prototype instanceof SnoopBotEvent) {
                 const instance = new EventClass()
-                this.events[instance.getEventType()] = instance;
+                
+                if(this.events[instance.getEventType()] !== undefined) 
+                    this.events[instance.getEventType()].push(instance);
+                else 
+                    this.events[instance.getEventType()] = [
+                        instance
+                    ];
             } else {
                 Logger.error(`Class ${eventClass} does not extend SnoopBotEvent class. This class will be ignored and not added.`)
             }
@@ -339,7 +345,9 @@ export default class SnoopBot {
     
                                     // Execute the callback if it exists in the events array
                                     if(this.events['gc:member_join'] !== undefined)
-                                        this.queue.enqueue(async() => await this.events['gc:member_join'].onEvent(event, api))
+                                        this.events['gc:member_join'].forEach((eventHandler: SnoopBotEvent) => {
+                                            this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                        })
                                 break
     
                                 // Member left a group chat
@@ -349,7 +357,9 @@ export default class SnoopBot {
     
                                     // Execute the callback if it exists in the events array
                                     if(this.events['gc:member_leave'] !== undefined)
-                                        this.queue.enqueue(async() => await this.events['gc:member_leave'].onEvent(event, api))
+                                        this.events['gc:member_leave'].forEach((eventHandler: SnoopBotEvent) => {
+                                            this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                        })
                                 break
     
                                 // A group chat changed name
@@ -359,7 +369,9 @@ export default class SnoopBot {
     
                                     // Execute the callback if it exists in the events array
                                     if(this.events['gc:change_name'] !== undefined)
-                                        this.queue.enqueue(async() => await this.events['gc:change_name'].onEvent(event, api))
+                                        this.events['gc:change_name'].forEach((eventHandler: SnoopBotEvent) => {
+                                            this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                        })
                                 break
                                 
                                 // A group chat changed icon
@@ -369,7 +381,9 @@ export default class SnoopBot {
     
                                     // Execute the callback if it exists in the events array
                                     if(this.events['gc:change_icon'] !== undefined)
-                                        this.queue.enqueue(async() => await this.events['gc:change_icon'].onEvent(event, api))
+                                        this.events['gc:change_icon'].forEach((eventHandler: SnoopBotEvent) => {
+                                            this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                        })
                                 break
     
                                 // A group chat changed theme
@@ -379,14 +393,18 @@ export default class SnoopBot {
     
                                     // Execute the callback if it exists in the events array
                                     if(this.events['gc:change_theme'] !== undefined)
-                                        this.queue.enqueue(async() => await this.events['gc:change_theme'].onEvent(event, api))
+                                        this.events['gc:change_theme'].forEach((eventHandler: SnoopBotEvent) => {
+                                            this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                        })
                                 break
     
                                 // A user changed nickname
                                 case 'log:user-nickname':
                                     // Execute the callback if it exists in the events array
                                     if(this.events['user:change_nickname'] !== undefined)
-                                        this.queue.enqueue(async() => await this.events['user:change_nickname'].onEvent(event, api))
+                                        this.events['user:change_nickname'].forEach((eventHandler: SnoopBotEvent) => {
+                                            this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                        })
                                 break
                             }
                         }
@@ -398,8 +416,18 @@ export default class SnoopBot {
                                 // Include the messages object in the event object
                                 event.messages = this.messages;
 
-                                this.queue.enqueue(async() => await this.events['message:unsend'].onEvent(event, api));
+                                this.events['message:unsend'].forEach((eventHandler: SnoopBotEvent) => {
+                                    this.queue.enqueue(async() => await eventHandler.onEvent(event, api))
+                                })
                             }
+                        } 
+                        // If the event type is "message"
+                        else if(event.type === 'message') {
+                            // Execute the callback if it exists in the events array
+                            if(this.events['message:send'] !== undefined)
+                                this.events['message:send'].forEach((eventHandler: SnoopBotEvent) => {
+                                    this.queue.enqueue(async() => await eventHandler.onEvent(event, api));
+                                })
                         }
     
                         settings = Settings.getSettings()
