@@ -241,6 +241,7 @@ Inside the `onEvent()` method is where you will handle the received event. After
 | `gc:change_name` | Triggered when a group chat changes its name. |
 | `user:change_nickname` | Triggered when a user changes his/her nickname. |
 | `message:unsend` | Triggered when a user unsends a message. |
+| `message:send` | Triggered when a user sends a message. |
 
 ### Binding event handler to an event
 
@@ -254,7 +255,7 @@ public getEventType() : SnoopBotEventType {
 
 Refer to the table above for the types of event that you may bind your event handler to.
 
-⚠️ **You may only bind <ins>ONE EVENT HANDLER</ins> to <ins>ONE TYPE OF EVENT</ins> ⚠️**
+> ⚠️ Note: You may bind **<ins>MULTIPLE EVENT HANDLERS</ins>** to **<ins>ONE TYPE OF EVENT</ins>**.
 
 ## Creating new middleware
 
