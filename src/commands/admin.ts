@@ -6,9 +6,9 @@ export class AdminUtils {
     constructor() {}
 
     public static getThreadAdmins(threadID: string) {
-        let permissions = PermissionUtil.getPermissionSettings()
-        let threadAdmins = permissions['thread-admins'][threadID] || []
-        let botOwner = permissions['bot-owner']
+        const permissions = PermissionUtil.getPermissionSettings()
+        const threadAdmins = permissions['thread-admins'][threadID] || []
+        const botOwner = permissions['bot-owner']
 
         if(threadAdmins.length === 0)
             return {
@@ -25,14 +25,14 @@ export class AdminUtils {
     }
 
     public static addAdminsToThread(threadID: string, ...newAdmins: string[]) {
-        let allThreadAdmins = PermissionUtil.getPermissionSettings()
+        const allThreadAdmins = PermissionUtil.getPermissionSettings()
         let alreadyAdmins = []
 
         if(allThreadAdmins['thread-admins'][threadID] === undefined)
             allThreadAdmins['thread-admins'][threadID] = []
 
         if(allThreadAdmins['thread-admins'][threadID].length > 0) {
-            let admins = allThreadAdmins['thread-admins'][threadID]
+            const admins = allThreadAdmins['thread-admins'][threadID]
 
             alreadyAdmins = newAdmins.filter((admin) => admins.includes(admin))
 
@@ -49,7 +49,7 @@ export class AdminUtils {
     }
 
     public static removeAdminsFromThread(threadID: string, ...adminsToRemove: string[]) {
-        let allThreadAdmins = PermissionUtil.getPermissionSettings()
+        const allThreadAdmins = PermissionUtil.getPermissionSettings()
         let notAdmins = []
 
         if(allThreadAdmins['thread-admins'][threadID] === undefined || allThreadAdmins['thread-admins'][threadID].length === 0)
@@ -59,7 +59,7 @@ export class AdminUtils {
             }
 
         if(allThreadAdmins['thread-admins'][threadID].length > 0) {
-            let admins = allThreadAdmins['thread-admins'][threadID]
+            const admins = allThreadAdmins['thread-admins'][threadID]
 
             notAdmins = adminsToRemove.filter((admin) => !admins.includes(admin))
 
@@ -70,7 +70,7 @@ export class AdminUtils {
                 }
         }
 
-        let admins = allThreadAdmins['thread-admins'][threadID]
+        const admins = allThreadAdmins['thread-admins'][threadID]
         adminsToRemove.forEach((admin) => admins.splice(admins.indexOf(admin), 1))
         allThreadAdmins['thread-admins'][threadID] = admins
 
@@ -82,8 +82,8 @@ export class AdminUtils {
     }
 
     public static listAdminsInThread(threadID: string) {
-        let allThreadAdmins = PermissionUtil.getPermissionSettings()
-        let admins = allThreadAdmins['thread-admins'][threadID]
+        const allThreadAdmins = PermissionUtil.getPermissionSettings()
+        const admins = allThreadAdmins['thread-admins'][threadID]
 
         if(admins === undefined || admins.length === 0)
             return {
@@ -111,21 +111,21 @@ export default class AdminCommand extends SnoopBotCommand {
     }
 
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
-        let settingsList = Settings.getSettings()
-        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
-        let adminWhitelist = AdminUtils.getThreadAdmins(event.threadID)
-        let admins = adminWhitelist.hasError ? [] : adminWhitelist.admins!
+        const settingsList = Settings.getSettings()
+        const threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
+        const adminWhitelist = AdminUtils.getThreadAdmins(event.threadID)
+        const admins = adminWhitelist.hasError ? [] : adminWhitelist.admins!
 
-        let action = (matches[1] as string) // promote/demote/list
-        let person = (matches[2] as string) // @you
-        let mentions = event.mentions
+        const action = (matches[1] as string) // promote/demote/list
+        const person = (matches[2] as string) // @you
+        const mentions = event.mentions
 
         // Promoting/Demoting user by replying to his/her message
         // The command: /admin (promote|demote) @you
         if(event.type === 'message_reply' && (action === 'promote' || action === 'demote')) {
-            let userReplyID = event.messageReply!.senderID
-            let botID = await api.getCurrentUserID()
-            let user = (await api.getUserInfo(userReplyID))[userReplyID]
+            const userReplyID = event.messageReply!.senderID
+            const botID = await api.getCurrentUserID()
+            const user = (await api.getUserInfo(userReplyID))[userReplyID]
 
             // If admin wants to promote/demote bot owner or the bot iself
             if(userReplyID === botID || userReplyID === adminWhitelist.botOwner) {
@@ -231,11 +231,11 @@ export default class AdminCommand extends SnoopBotCommand {
             }
 
             let message = "Current chatbot administrators in this thread:\n\n"
-            let adminInfos = await api.getUserInfo(admins)
-            let mentions = []
+            const adminInfos = await api.getUserInfo(admins)
+            const mentions = []
 
-            for(let admin in adminInfos) {
-                let userInfo = adminInfos[admin]
+            for(const admin in adminInfos) {
+                const userInfo = adminInfos[admin]
                 message += `@${userInfo.name}\n`
 
                 mentions.push({
@@ -257,13 +257,13 @@ export default class AdminCommand extends SnoopBotCommand {
     }
 
     private async promoteOrDemote(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
-        let settingsList = Settings.getSettings()
-        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
-        let adminWhitelist = AdminUtils.getThreadAdmins(event.threadID)
-        let admins = adminWhitelist.hasError ? [] : adminWhitelist.admins!
-        let action = (matches[1] as string)
-        let person = (matches[2] as string)
-        let mentions = event.mentions!
+        const settingsList = Settings.getSettings()
+        const threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
+        const adminWhitelist = AdminUtils.getThreadAdmins(event.threadID)
+        const admins = adminWhitelist.hasError ? [] : adminWhitelist.admins!
+        const action = (matches[1] as string)
+        const person = (matches[2] as string)
+        const mentions = event.mentions!
 
         // If admin did not mentioned any users
         if(Object.entries(mentions).length === 0) {
@@ -277,8 +277,8 @@ export default class AdminCommand extends SnoopBotCommand {
         }
 
         // Get user ids of mentioned users
-        let mentionedIds = []
-        for(let mentionedID in mentions)
+        const mentionedIds = []
+        for(const mentionedID in mentions)
             mentionedIds.push(mentionedID)
 
         // Promote or demote mentioned users
@@ -292,9 +292,9 @@ export default class AdminCommand extends SnoopBotCommand {
         // If promoting/demoting succeeded
         if(result !== undefined && !result.hasError) {
             let message = `Successfully ${action}d `
-            let toBeMentioned = []
+            const toBeMentioned = []
 
-            for(let mentionedID in mentions) {
+            for(const mentionedID in mentions) {
                 message += `${mentions[mentionedID]} `
                 toBeMentioned.push({
                     id: mentionedID,
@@ -314,11 +314,11 @@ export default class AdminCommand extends SnoopBotCommand {
 
         // If Promoting/Demoting failed
         if(result !== undefined && result.hasError) {
-            let userIDs = result.alreadyAdmins || result.notAdmins
+            const userIDs = result.alreadyAdmins || result.notAdmins
             let message = `⚠️ ${action === "promote" ? "Promotion" : "Demotion"} failed, `
-            let toBeMentioned = []
+            const toBeMentioned = []
             
-            for(let userID of userIDs) {
+            for(const userID of userIDs) {
                 message += `${mentions[userID]} `
                 toBeMentioned.push({
                     id: userID,
@@ -327,8 +327,8 @@ export default class AdminCommand extends SnoopBotCommand {
                 })
             }
             
-            let isOrAre = userIDs.length > 1 ? "are" : "is"
-            let alreadyOrNot = action === "promote" ? "already" : "not"
+            const isOrAre = userIDs.length > 1 ? "are" : "is"
+            const alreadyOrNot = action === "promote" ? "already" : "not"
             message += `${isOrAre} ${alreadyOrNot} an administrator of this chatbot!`
             
             api.sendMessage({

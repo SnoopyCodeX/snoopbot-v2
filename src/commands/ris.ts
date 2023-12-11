@@ -14,8 +14,8 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
     }
 
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
-        let imageUrl = matches.pop()
-        let eventType = event.type
+        const imageUrl = matches.pop()
+        const eventType = event.type
 
         if(eventType == 'message_reply') {
             // If the user still specified an image url, inform the user
@@ -43,7 +43,7 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
     }
 
     private async _doReverseImageSearchOnRepliedImage(messageBody: any, event: FCAMainEvent, api: FCAMainAPI, debugMode: boolean) {
-        let attachments = messageBody.attachments
+        const attachments = messageBody.attachments
 
         if(attachments.length === 0) {
             api.sendMessage("⚠️Please reply this command to an image", event.threadID, event.messageID)
@@ -60,21 +60,21 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
             return
         }
 
-        let imageUrl = attachments[0].largePreviewUrl
+        const imageUrl = attachments[0].largePreviewUrl
         await this._doReverseImageSearch(imageUrl, event, api, debugMode)
     }
 
     private async _doReverseImageSearch(imageUrl: string, event: FCAMainEvent, api: FCAMainAPI, debugMode: boolean) {
-        let downloadImageResult = await Downloader.downloadFile(imageUrl, debugMode)
+        const downloadImageResult = await Downloader.downloadFile(imageUrl, debugMode)
 
         if(downloadImageResult.hasError) {
             api.sendMessage(`⚠️Failed to download the image. Cause: ${downloadImageResult.message}`, event.threadID, event.messageID)
             return
         }
 
-        let downloadedImageStream = downloadImageResult.results![0]
-        let bufferImage = await this._streamToBuffer(downloadedImageStream)
-        let risResult = await google.search(bufferImage, {ris: true})
+        const downloadedImageStream = downloadImageResult.results![0]
+        const bufferImage = await this._streamToBuffer(downloadedImageStream)
+        const risResult = await google.search(bufferImage, {ris: true})
 
         if(risResult.results.length === 0) {
             api.sendMessage("⚠️Reverse image search did not find anything on the web regarding this image", event.threadID, event.messageID)
@@ -84,9 +84,9 @@ export default class ReverseImageSearchCommand extends SnoopBotCommand {
         let messageResultBody = `✅Found ${risResult.results.length} result${risResult.results.length > 1 ? 's' : ''}:\n\n`
 
         risResult.results.forEach((result, index) => {
-            let title = result.title
-            let description = result.description
-            let url = result.url
+            const title = result.title
+            const description = result.description
+            const url = result.url
 
             messageResultBody += `${index + 1}. ${title}\n${description}\n\n${url}\n\n`
         })

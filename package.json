@@ -13,7 +13,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx rimraf ./build && tsc --build --force && npm link",
+    "lint": "npx eslint .",
+    "fix": "npx eslint . --fix",
+    "build": "npm run lint && npx rimraf ./build && tsc --build --force && npm link",
     "start": "npm run build && node build/index.js"
   },
   "keywords": [
@@ -26,6 +28,9 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.8.7",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
     "rimraf": "^5.0.5",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"

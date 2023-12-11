@@ -19,10 +19,10 @@ export default class MemberJoinEvent extends SnoopBotEvent {
         super()
     }
 
-    private toOrdinalNumber(number: Number): string {
-        let _strNumber = `${number}`;
-        let _prevNumber = _strNumber.split("")[_strNumber.length - 2];
-        let _lastNumber = _strNumber.split("")[_strNumber.length - 1];
+    private toOrdinalNumber(number: number): string {
+        const _strNumber = `${number}`;
+        const _prevNumber = _strNumber.split("")[_strNumber.length - 2];
+        const _lastNumber = _strNumber.split("")[_strNumber.length - 1];
 
         switch(_lastNumber) {
             case "1":
@@ -45,28 +45,28 @@ export default class MemberJoinEvent extends SnoopBotEvent {
 
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Ignore threads that are not whitelisted
-        let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
+        const threadWhitelist = ThreadWhitelist.getThreadWhitelist()
         if(!threadWhitelist.threads.includes(event.threadID))
             return
 
-        let thread = await api.getThreadInfo(event.threadID);
+        const thread = await api.getThreadInfo(event.threadID);
 
-        let settingsList = Settings.getSettings();
+        const settingsList = Settings.getSettings();
         if(settingsList.threads[event.threadID] === undefined)
             settingsList.threads[event.threadID] = settingsList.defaultSettings;
         Settings.saveSettings(settingsList);
 
-        let threadSettings = settingsList.threads[event.threadID];
-        let threadName = thread.threadName;
-        let participants = thread.userInfo;
-        let addedParticipants = event.logMessageData.addedParticipants;
-        let botID = await api.getCurrentUserID();
-        let message: MessageType = {
+        const threadSettings = settingsList.threads[event.threadID];
+        const threadName = thread.threadName;
+        const participants = thread.userInfo;
+        const addedParticipants = event.logMessageData.addedParticipants;
+        const botID = await api.getCurrentUserID();
+        const message: MessageType = {
             body: "",
             mentions: []
         };
 
-        for(let newParticipant of addedParticipants) {
+        for(const newParticipant of addedParticipants) {
             if(newParticipant.userFbId == botID) {
                 message.body = `Hi, I am SnoopBot. Thank you for having me as the ${this.toOrdinalNumber(participants.length)} member of "${threadName}.\n\n"`;
                 message.body += `Type ${threadSettings.prefix}help to see the list of available commands. Please remember to not spam the bot to avaoid this bot from being muted by facebook. Thank you for your kind understanding! <3\n\n~Author: @John Roy Lapida Calimlim`;
@@ -82,8 +82,8 @@ export default class MemberJoinEvent extends SnoopBotEvent {
             if(!threadSettings.autoGreetEnabled)
                 return;
     
-            let firstName = newParticipant.firstName;
-            let id = newParticipant.userFbId;
+            const firstName = newParticipant.firstName;
+            const id = newParticipant.userFbId;
 
             message.body = `Welcome @${firstName}, you are the ${this.toOrdinalNumber(participants.length)} member of ${threadName}! Please follow the rules and regulation of this group, respect all members and admins.\n\nWe hope that we'll know about you better and we'd have a great friendship ahead. <3`;
             message.mentions.push({
@@ -92,7 +92,7 @@ export default class MemberJoinEvent extends SnoopBotEvent {
             });
 
             try {
-                let profileUrl = `https://graph.facebook.com/${id}/picture?width=720&height=720&access_token=${process.env.FB_ACCESS_TOKEN}`
+                const profileUrl = `https://graph.facebook.com/${id}/picture?width=720&height=720&access_token=${process.env.FB_ACCESS_TOKEN}`
                 Logger.success(`Downloading ${profileUrl}`)
 
                 await this.createBanner(firstName, threadName, profileUrl, participants.length, (banner: string) => (async() => {
@@ -120,20 +120,20 @@ export default class MemberJoinEvent extends SnoopBotEvent {
         }
     }
 
-    private async createBanner(participant_name: string, thread_name: string, profile_url: string, participants_number: number, callback: Function) : Promise<void> {
+    private async createBanner(participant_name: string, thread_name: string, profile_url: string, participants_number: number, callback: (args: string) => void) : Promise<void> {
         try {
-            let outputImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_banner-${participant_name}-${participants_number}.png`
-            let profileImage = `${process.cwd()}/src/snoopbot/lib/images/profile-pic-downloaded-${participant_name}-${participants_number}.png`
-            let profileCircleCropped = `${process.cwd()}/src/snoopbot/lib/images/profile-cropped-circle-${participant_name}-${participants_number}.png`
-            let overlayImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_bg.jpg`
-            let circleSize = 200
+            const outputImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_banner-${participant_name}-${participants_number}.png`
+            const profileImage = `${process.cwd()}/src/snoopbot/lib/images/profile-pic-downloaded-${participant_name}-${participants_number}.png`
+            const profileCircleCropped = `${process.cwd()}/src/snoopbot/lib/images/profile-cropped-circle-${participant_name}-${participants_number}.png`
+            const overlayImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_bg.jpg`
+            const circleSize = 200
 
-            let welcomeMessage = `Welcome to ${thread_name}`
-            let memberMessage = `You are the ${this.toOrdinalNumber(participants_number)} member of ${thread_name}`
+            const welcomeMessage = `Welcome to ${thread_name}`
+            const memberMessage = `You are the ${this.toOrdinalNumber(participants_number)} member of ${thread_name}`
 
             // Download profile image
             Logger.muted('Downloading profile...')
-            let downloadProfileResult = await Downloader.downloadFile(profile_url)
+            const downloadProfileResult = await Downloader.downloadFile(profile_url)
             
             if(downloadProfileResult.hasError) {
                 Logger.error("Profile download failed: " + downloadProfileResult.message!)
@@ -141,8 +141,8 @@ export default class MemberJoinEvent extends SnoopBotEvent {
             }
             
             Logger.success('Profile image downloaded successfully!')
-            let profileReadableStreamImage: Readable = downloadProfileResult.results![0]
-            let profileWritableStreamImage = createWriteStream(profileImage)
+            const profileReadableStreamImage: Readable = downloadProfileResult.results![0]
+            const profileWritableStreamImage = createWriteStream(profileImage)
 
             profileReadableStreamImage.pipe(profileWritableStreamImage)
             profileWritableStreamImage.on("finish", async () => {

@@ -12,11 +12,11 @@ export default class PlayCommand extends SnoopBotCommand {
     }
 
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
-        let songTitle = matches.pop()
+        const songTitle = matches.pop()
 
         api.sendMessage(`🔍Searching for "${songTitle}"...`, event.threadID, event.messageID)
 
-        let result = await Downloader.downloadYTVideo(songTitle, "audio", !!extras.debugMode)
+        const result = await Downloader.downloadYTVideo(songTitle, "audio", !!extras.debugMode)
 
         if(result.hasError) {
             api.sendMessage(`⚠️ ${result.message}`, event.threadID, event.messageID)
@@ -25,7 +25,7 @@ export default class PlayCommand extends SnoopBotCommand {
 
         api.sendMessage(`✅ Found "${result.results![1]}", sending...`, event.threadID, event.messageID)
 
-        let messageData = {
+        const messageData = {
             body: `🎧Playing "${result.results![1]}"`,
             attachment: result.results![0]
         }

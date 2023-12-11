@@ -14,10 +14,10 @@ export default class SettingsCommand extends SnoopBotCommand {
     }
 
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
-        let settingsList = Settings.getSettings()
-        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
-        let userSettings = (matches[1].split(" ")[0] as string)
-        let option = (matches[1].split(" ")[1] as string|undefined)
+        const settingsList = Settings.getSettings()
+        const threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
+        const userSettings = (matches[1].split(" ")[0] as string)
+        const option = (matches[1].split(" ")[1] as string|undefined)
 
         // If user wanted to list the settings
         if(userSettings === 'list') {
@@ -35,7 +35,7 @@ export default class SettingsCommand extends SnoopBotCommand {
             let message = `⚙️Current settings of SnoopBot in this thread:\n\n`
             let counter = 1
 
-            for(let setting in threadSettings)
+            for(const setting in threadSettings)
                 message += `${counter++}. ${setting}: ${threadSettings[setting as keyof DefaultSettingsType]}\n\n`
 
             api.sendMessage(message, event.threadID, event.messageID)

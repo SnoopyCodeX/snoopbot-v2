@@ -15,12 +15,12 @@ export default class JoinOrLeaveMiddleware extends SnoopBotMiddleware {
 
     public handle(next: (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => Promise<any>) {
         return async (matches: any[], event: FCAMainEvent, api: FCAMainAPI, extra: SnoopBotCommandExtras) => {
-            let whitelist = ThreadWhitelist.getThreadWhitelist()
-            let threadAdmins = AdminUtils.getThreadAdmins(event.threadID)
-            let botOwner = threadAdmins.botOwner
-            let admins = threadAdmins.hasError ? [] : threadAdmins.admins!
+            const whitelist = ThreadWhitelist.getThreadWhitelist()
+            const threadAdmins = AdminUtils.getThreadAdmins(event.threadID)
+            const botOwner = threadAdmins.botOwner
+            const admins = threadAdmins.hasError ? [] : threadAdmins.admins!
             
-            let currentBotID = await api.getCurrentUserID()
+            const currentBotID = await api.getCurrentUserID()
 
             if(!whitelist.threads.includes(event.threadID) && 
                 (event.senderID! !== currentBotID) &&

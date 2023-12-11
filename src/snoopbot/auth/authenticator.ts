@@ -95,14 +95,14 @@ export default class Authenticator {
 
                 await page.waitForSelector("div[role=main]");
 
-                let cookies = await page.cookies();
-                let parsedCookies = cookies.map(({name: key, ...rest}) => ({key, ...rest}));
+                const cookies = await page.cookies();
+                const parsedCookies = cookies.map(({name: key, ...rest}) => ({key, ...rest}));
 
-                let cookieString = JSON.stringify(parsedCookies);
+                const cookieString = JSON.stringify(parsedCookies);
 
                 Logger.muted("Writing session file...");
 
-                let cryptResult = Crypt.encrypt(Buffer.from(cookieString).toString("base64"))
+                const cryptResult = Crypt.encrypt(Buffer.from(cookieString).toString("base64"))
 
                 if(cryptResult === 'failed') {
                     return
@@ -114,7 +114,7 @@ export default class Authenticator {
                 Logger.success("Starting snoopbot...");
             } catch(error: any) {
                 if(error instanceof Error) {
-                    let errMessage = error.message;
+                    const errMessage = error.message;
 
                     if(errMessage.includes('div[role=main]')) {
                         Logger.error(`Invalid email address or password. If your account has 2FA enabled, please disable it. ${errMessage}`);

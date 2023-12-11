@@ -342,7 +342,7 @@ type FCAMainAPI = {
     addUserToGroup: (userID: string|Array<string|number>|number, threadID: string|string[]|number, callback?: (err: any) => void) => Promise<any>;
     changeAdminStatus: (threadID: string, adminIDs: string|string[], adminStatus: boolean, callback?: (err: any) => void) => Promise<any>;
     changeArchivedStatus: (threadOrThreads: string|string[], archive: any, callback?: (err: any) => void) => Promise<any>;
-    changeBio: (bio?: string, publish?: ()=>Promise<any>|Function|boolean, callback?: (err: any) => void) => Promise<any>;
+    changeBio: (bio?: string, publish?: (()=>Promise<any>|void)|boolean, callback?: (err: any) => void) => Promise<any>;
     changeBlockedStatus: (userID: string, block: boolean, callback?: (err: any) => void) => Promise<any>;
     changeGroupImage: (image: any, threadID: string, callback?: (err: any) => void) => Promise<any>;
     changeNickname: (nickname: string, threadID: string, participantID: string, callback?: (err: any) => void) => Promise<any>;

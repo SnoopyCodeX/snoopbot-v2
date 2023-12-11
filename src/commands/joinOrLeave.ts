@@ -9,7 +9,7 @@ export class ThreadWhitelist {
         return JSON.parse(readFileSync(`${process.cwd()}/src/snoopbot/lib/thread-whitelist.json`, {encoding: 'utf-8'}));
     }
 
-    public static saveThreadWhitelist(newThreadWhitelist: any) {
+    public static saveThreadWhitelist(newThreadWhitelist: {threads: string[]}) {
         writeFileSync(`${process.cwd()}/src/snoopbot/lib/thread-whitelist.json`, JSON.stringify(newThreadWhitelist, undefined, 4), {encoding: 'utf-8'});
     }
 
@@ -29,8 +29,8 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
         });
     }
 
-    public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
-        let action = matches[0]; // join | leave
+    public async execute(matches: string[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras) {
+        const action = matches[0]; // join | leave
 
         switch(action) {
             case "join":
@@ -44,10 +44,10 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
     }
 
     private join(event: FCAMainEvent, api: FCAMainAPI) {
-        let settingsList = Settings.getSettings();
-        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings;
+        const settingsList = Settings.getSettings();
+        const threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings;
 
-        let threadWhitelist = ThreadWhitelist.getThreadWhitelist();
+        const threadWhitelist = ThreadWhitelist.getThreadWhitelist();
         let justJoined = false;
 
         if(!ThreadWhitelist.isThreadWhitelisted(event.threadID)) {
@@ -57,7 +57,7 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
             justJoined = true;
         }
 
-        let msg = justJoined 
+        const msg = justJoined 
             ? `🎉 SnoopBot joined the conversation!\nType ${threadSettings.prefix}help — to see the list of available commands!`
             : "🚧 SnoopBot is already in this conversation.";
 
@@ -65,10 +65,10 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
     }
 
     private leave(event: FCAMainEvent, api: FCAMainAPI) {
-        let settingsList = Settings.getSettings();
-        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings;
+        const settingsList = Settings.getSettings();
+        const threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings;
 
-        let threadWhitelist = ThreadWhitelist.getThreadWhitelist();
+        const threadWhitelist = ThreadWhitelist.getThreadWhitelist();
         let justLeft = false;
 
         if(ThreadWhitelist.isThreadWhitelisted(event.threadID)) {
@@ -78,7 +78,7 @@ export default class JoinOrLeaveCommand extends SnoopBotCommand {
             justLeft = true;
         }
 
-        let msg = justLeft 
+        const msg = justLeft 
             ? `🚨 SnoopBot has left the conversation!\nType ${threadSettings.prefix}join — to add the bot back again!`
             : "🚧 SnoopBot is not in this conversation.";
             

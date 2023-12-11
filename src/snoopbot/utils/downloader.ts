@@ -138,7 +138,7 @@ export default class Downloader {
      */
     public static async downloadFile(url: string, debugMode: boolean = false) : Promise<DownloadResult> {
         try {
-            let response = await axios.get(url, {responseType: "stream"})
+            const response = await axios.get(url, {responseType: "stream"})
 
             // Response status is not 200, throw an error
             if(response.status !== 200) {
@@ -148,10 +148,10 @@ export default class Downloader {
                 }
             }
 
-            let readableUint8Array = await Downloader.axiosResponseToReadableStream(response)
+            const readableUint8Array = await Downloader.axiosResponseToReadableStream(response)
 
-            let sizeInBytes = parseInt(response.data.rawHeaders[response.data.rawHeaders.indexOf('Content-Length') + 1])
-            let sizeInMB = Math.round((sizeInBytes / (1024 * 1024) + Number.EPSILON) * 100) / 100
+            const sizeInBytes = parseInt(response.data.rawHeaders[response.data.rawHeaders.indexOf('Content-Length') + 1])
+            const sizeInMB = Math.round((sizeInBytes / (1024 * 1024) + Number.EPSILON) * 100) / 100
 
             // If file size is greater than or equal to 25mb, throw an error
             if(sizeInMB > 25) {
@@ -161,8 +161,8 @@ export default class Downloader {
                 }
             }
 
-            let fileMimeType = response.data.rawHeaders[response.data.rawHeaders.indexOf('Content-Type') + 1]
-            let filename = `file.${mime.getExtension(fileMimeType)}`
+            const fileMimeType = response.data.rawHeaders[response.data.rawHeaders.indexOf('Content-Type') + 1]
+            const filename = `file.${mime.getExtension(fileMimeType)}`
 
             // Download success, return the file as a readable stream
             return {
@@ -195,8 +195,8 @@ export default class Downloader {
      */
     public static async downloadYTVideo(video: string, type: YTDownloadType = 'video+audio', debugMode: boolean = false): Promise<DownloadResult> {
         try {
-            let yt = await Innertube.create({cache: new UniversalCache(false), generate_session_locally: true})
-            let searchResult = await yt.search(video, {sort_by: "relevance"})
+            const yt = await Innertube.create({cache: new UniversalCache(false), generate_session_locally: true})
+            const searchResult = await yt.search(video, {sort_by: "relevance"})
             
             // No search results found
             if(searchResult.results === undefined) {
@@ -206,8 +206,8 @@ export default class Downloader {
                 }
             }
             
-            let filterTypes = ['ShowingResultsFor', 'Channel', 'Shelf','ReelShelf'];
-            let filteredSearchResult = searchResult.results!.filter((result) => !filterTypes.includes(result.type))
+            const filterTypes = ['ShowingResultsFor', 'Channel', 'Shelf','ReelShelf'];
+            const filteredSearchResult = searchResult.results!.filter((result) => !filterTypes.includes(result.type))
 
             // After filtering, no search results found
             if(filteredSearchResult.length == 0) {
@@ -217,20 +217,20 @@ export default class Downloader {
                 }
             }
 
-            let firstSearchResult = filteredSearchResult.shift()!.as(YTNodes.Video)
-            let videoID = firstSearchResult.id
-            let videoTitle = firstSearchResult.title.text ?? video
-            let info = await yt.getBasicInfo(videoID)
+            const firstSearchResult = filteredSearchResult.shift()!.as(YTNodes.Video)
+            const videoID = firstSearchResult.id
+            const videoTitle = firstSearchResult.title.text ?? video
+            const info = await yt.getBasicInfo(videoID)
 
-            let videoFormatOptions: FormatOptions = {
+            const videoFormatOptions: FormatOptions = {
                 type: type,
                 quality: 'best',
                 format: 'mp4'
             }
 
-            let formattedVideo = info.chooseFormat(videoFormatOptions)
-            let sizeInBytes = formattedVideo.content_length ?? 0
-            let sizeInMB = Math.round((sizeInBytes / (1024 * 1024) + Number.EPSILON) * 100) / 100
+            const formattedVideo = info.chooseFormat(videoFormatOptions)
+            const sizeInBytes = formattedVideo.content_length ?? 0
+            const sizeInMB = Math.round((sizeInBytes / (1024 * 1024) + Number.EPSILON) * 100) / 100
 
             // If file size is greater than or equal to 25mb, throw an error
             if(sizeInMB > 25) {
@@ -240,9 +240,9 @@ export default class Downloader {
                 }
             }
 
-            let downloadStream = await info.download({ ...videoFormatOptions })
-            let downladFilename = `${videoTitle + Downloader.getYTDownloadFileExtension(type)}`
-            let downloadMimeType = formattedVideo.mime_type.split(';').shift() ?? ""
+            const downloadStream = await info.download({ ...videoFormatOptions })
+            const downladFilename = `${videoTitle + Downloader.getYTDownloadFileExtension(type)}`
+            const downloadMimeType = formattedVideo.mime_type.split(';').shift() ?? ""
 
             // Download success, return the file as a readable stream
             return {

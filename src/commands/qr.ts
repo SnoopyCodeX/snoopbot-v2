@@ -17,23 +17,23 @@ export default class QRCodeCommand extends SnoopBotCommand {
     }
 
     public async execute(matches: any[], event: FCAMainEvent, api: FCAMainAPI, extras: SnoopBotCommandExtras): Promise<void> {
-        let qrCode = (await import('@shortcm/qr-image/lib/png')).default
-        let { getPNG } = qrCode
+        const qrCode = (await import('@shortcm/qr-image/lib/png')).default
+        const { getPNG } = qrCode
 
-        let profileCurl = `https://graph.facebook.com/${event.senderID}/picture?width=720&height=720&access_token=${process.env.FB_ACCESS_TOKEN}`
-        let downloadResult = await Downloader.downloadFile(profileCurl)
+        const profileCurl = `https://graph.facebook.com/${event.senderID}/picture?width=720&height=720&access_token=${process.env.FB_ACCESS_TOKEN}`
+        const downloadResult = await Downloader.downloadFile(profileCurl)
 
         if(downloadResult.hasError) {
             api.sendMessage(`⚠️Failed to download profile picture. ${downloadResult.message!}`, event.threadID, event.messageID)
             return
         }
 
-        let text = matches[1] // text to encode
-        let profilePicturePath = `${process.cwd()}/src/snoopbot/lib/images/qrcode-profile-picture-${event.senderID}.png`
-        let qrCodeOutputPath = `${process.cwd()}/src/snoopbot/lib/images/qrcode-output-${event.senderID}.png`
-        let profilePictureReadStream = downloadResult.results![0]
-        let profilePictureWriteStream = createWriteStream(profilePicturePath)
-        let circleSize = 32
+        const text = matches[1] // text to encode
+        const profilePicturePath = `${process.cwd()}/src/snoopbot/lib/images/qrcode-profile-picture-${event.senderID}.png`
+        const qrCodeOutputPath = `${process.cwd()}/src/snoopbot/lib/images/qrcode-output-${event.senderID}.png`
+        const profilePictureReadStream = downloadResult.results![0]
+        const profilePictureWriteStream = createWriteStream(profilePicturePath)
+        const circleSize = 32
 
         profilePictureReadStream.pipe(profilePictureWriteStream)
         profilePictureWriteStream.on("finish", async() => {
@@ -51,14 +51,14 @@ export default class QRCodeCommand extends SnoopBotCommand {
                 ])
                 .toBuffer()
                 .then((buffer) => (async() => {
-                    let pngBuffer = await getPNG(text, {
+                    const pngBuffer = await getPNG(text, {
                         logo: buffer,
                         logoWidth: circleSize,
                         logoHeight: circleSize
                     })
 
-                    let pngReadable = this.bufferToReadable(pngBuffer)
-                    let pngWritable = createWriteStream(qrCodeOutputPath)
+                    const pngReadable = this.bufferToReadable(pngBuffer)
+                    const pngWritable = createWriteStream(qrCodeOutputPath)
 
                     pngReadable.pipe(pngWritable)
                     pngWritable.on("finish", () => {
@@ -90,7 +90,7 @@ export default class QRCodeCommand extends SnoopBotCommand {
     }
 
     private bufferToReadable(buffer: Buffer) {
-        let readable = new Readable({
+        const readable = new Readable({
             read() {}
         })
 

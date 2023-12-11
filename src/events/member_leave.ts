@@ -18,22 +18,22 @@ export default class MemberLeaveEvent extends SnoopBotEvent {
 
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
         // Ignore threads that are not whitelisted
-        let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
+        const threadWhitelist = ThreadWhitelist.getThreadWhitelist()
         if(!threadWhitelist.threads.includes(event.threadID))
             return
 
-        let thread = await api.getThreadInfo(event.threadID);
+        const thread = await api.getThreadInfo(event.threadID);
 
-        let settingsList = Settings.getSettings();
+        const settingsList = Settings.getSettings();
         if(settingsList.threads[event.threadID] === undefined)
             settingsList.threads[event.threadID] = settingsList.defaultSettings;
         Settings.saveSettings(settingsList);
 
-        let threadSettings = settingsList.threads[event.threadID];
-        let threadName = thread.threadName;
-        let leftParticipantFbId = event.logMessageData.leftParticipantFbId;
-        let snoopbotFbId = await api.getCurrentUserID();
-        let message: MessageType = {
+        const threadSettings = settingsList.threads[event.threadID];
+        const threadName = thread.threadName;
+        const leftParticipantFbId = event.logMessageData.leftParticipantFbId;
+        const snoopbotFbId = await api.getCurrentUserID();
+        const message: MessageType = {
             mentions: [],
             body: ""
         };
@@ -46,8 +46,8 @@ export default class MemberLeaveEvent extends SnoopBotEvent {
         if(!threadSettings.autoGreetEnabled)
             return;
 
-        let user = await api.getUserInfo(leftParticipantFbId);
-        let name = user[leftParticipantFbId].name;
+        const user = await api.getUserInfo(leftParticipantFbId);
+        const name = user[leftParticipantFbId].name;
         message.body = `Farewell @${name}, the whole ${threadName} will be awaiting for your return!\n\nGoodbye for now and may you have a blessed day ahead! <3`;
         message.mentions.push({
             id: leftParticipantFbId,

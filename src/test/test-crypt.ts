@@ -1,6 +1,6 @@
 import { Crypt } from "../snoopbot"
 
 (async() => {
-    let mysecret = 'test'
+    const mysecret = 'test'
     console.log(Crypt.encrypt(mysecret))
 })()

@@ -35,7 +35,7 @@ export default class Logger {
     constructor() {}
 
     public static log(message: string, mode: LoggerType = 'muted') : void {
-        let logMessageTag = chalk.magentaBright('[SnoopBot]: ');
+        const logMessageTag = chalk.magentaBright('[SnoopBot]: ');
         let logMessageContent = ''
 
         switch(mode) {

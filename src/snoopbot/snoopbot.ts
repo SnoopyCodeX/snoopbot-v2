@@ -87,7 +87,7 @@ export default class SnoopBot {
     private printBanner() : void {
         process.stdout.write("\u001b[2J\u001b[0;0H")
 
-        let data = readFileSync(`${process.cwd()}/src/snoopbot/fonts/3d.flf`, "utf-8")
+        const data = readFileSync(`${process.cwd()}/src/snoopbot/fonts/3d.flf`, "utf-8")
         figlet.parseFont("3d", data)
 
         console.log(chalk.blueBright(figlet.textSync("SnoopBot-v2", { font: "3d" })))
@@ -107,7 +107,7 @@ export default class SnoopBot {
         if(Object.entries(commandsModule).length === 0) {
             Logger.error("No commands to import. To make one, please refer to the docs here https://snoopycodex.github.io/snoopbot-v2/DOCS.html")
             Logger.error("Terminating self...")
-            process.exit(process.exit(134))
+            process.exit(134)
         }
 
         const progress = new cliProgress.SingleBar({
@@ -119,10 +119,10 @@ export default class SnoopBot {
         progress.start(Object.entries(commandsModule).length, 0)
         
         for(const commandClass in commandsModule) {
-            let CommandClass = commandsModule[commandClass]
+            const CommandClass = commandsModule[commandClass]
 
             if(CommandClass.prototype instanceof SnoopBotCommand) {
-                let instance = new CommandClass()
+                const instance = new CommandClass()
                 this.commands.push(instance)
             } else {
                 Logger.error(`Class ${commandClass} does not extend SnoopBotCommand class. This class will be ignored and not added.`)
@@ -153,10 +153,10 @@ export default class SnoopBot {
         progress.start(Object.entries(eventsModule).length, 0)
 
         for(const eventClass in eventsModule) {
-            let EventClass = eventsModule[eventClass]
+            const EventClass = eventsModule[eventClass]
 
             if(EventClass.prototype instanceof SnoopBotEvent) {
-                let instance = new EventClass()
+                const instance = new EventClass()
                 this.events[instance.getEventType()] = instance;
             } else {
                 Logger.error(`Class ${eventClass} does not extend SnoopBotEvent class. This class will be ignored and not added.`)
@@ -187,10 +187,10 @@ export default class SnoopBot {
         progress.start(Object.entries(middlewaresModule).length, 0)
 
         for(const middlewareClass in middlewaresModule) {
-            let MiddlewareClass = middlewaresModule[middlewareClass]
+            const MiddlewareClass = middlewaresModule[middlewareClass]
 
             if(MiddlewareClass.prototype instanceof SnoopBotMiddleware) {
-                let instance = new MiddlewareClass()
+                const instance = new MiddlewareClass()
 
                 if(instance.getPriority() >= 1)
                     this.commandMiddlewares.push(instance)
@@ -233,7 +233,7 @@ export default class SnoopBot {
 
         this.printBanner()
 
-        if(!!this.options.debugMode)
+        if(this.options.debugMode)
             Logger.muted("SnoopBot is currently running in debug mode. You may disable this in the snoopbot's options.")
 
         try {
@@ -276,7 +276,7 @@ export default class SnoopBot {
     
                     let settings = Settings.getSettings()
                     let prefix = settings.defaultSettings.prefix
-                    let { handleMatches, debugMode, ...apiOptions } = this.options;
+                    const { handleMatches, debugMode, ...apiOptions } = this.options;
     
                     api.setOptions({
                         listenEvents: this.options.listenEvents,
@@ -289,17 +289,17 @@ export default class SnoopBot {
                     api.listen(async (error: any, event: FCAMainEvent) => {
                         if(error) return Logger.error(`Listening failed, cause: ${error}`)
 
-                        if(!!this.options.debugMode)
+                        if(this.options.debugMode)
                             Logger.muted(`Event received: ${JSON.stringify(event)}`)
 
                         // Intercept 'message' and 'message_reply' events 
                         // as this will be used when we resend the unsent messages to the
                         // thread again.
                         if(event.type === 'message' || event.type === 'message_reply') {
-                            let attachments = event.attachments!;
-                            let messageID = event.messageID!;
-                            let mentions = event.mentions!;
-                            let message = event.body!;
+                            const attachments = event.attachments!;
+                            const messageID = event.messageID!;
+                            const mentions = event.mentions!;
+                            const message = event.body!;
 
                             // If there is an attachment, store it in the object as well
                             // This will be resent back to the thread
@@ -311,7 +311,7 @@ export default class SnoopBot {
                             // to the object too
                             if(message.length !== 0) {
                                 if(this.messages[messageID] !== undefined) {
-                                    for(let msg of this.messages[messageID]) {
+                                    for(const msg of this.messages[messageID]) {
                                         msg.message = message;
                                         msg.mentions = mentions;
                                     }
@@ -328,8 +328,8 @@ export default class SnoopBot {
                         // Intercept events as these will be used to
                         // bind to user-defined callbacks
                         if(event.type === 'event') {
-                            let thread = await api.getThreadInfo(event.threadID)
-                            let eventType = event.logMessageType!
+                            const thread = await api.getThreadInfo(event.threadID)
+                            const eventType = event.logMessageType!
     
                             switch(eventType) {
                                 // Member joined a group chat
@@ -419,7 +419,7 @@ export default class SnoopBot {
                                 const _prefix_ = event.body.substring(0, (prefix as string).length)
     
                                 const commandPrefix = command.options.prefix || prefix
-                                let commandBody = event.body.substring((prefix as string).length).replace(/\n/g, " ")
+                                const commandBody = event.body.substring((prefix as string).length).replace(/\n/g, " ")
     
                                 const regexp = new RegExp(command.options.params.toString(), "gim")
                                 const matches = multilineRegex(regexp, commandBody)
@@ -430,7 +430,7 @@ export default class SnoopBot {
                                     : command.options.handleMatches
     
                                 if((commandPrefix == _prefix_ && matches.length !== 0) || handleMatches) {
-                                    let extras = {
+                                    const extras = {
                                         ...command.options,
                                         commands: this.getCommandsOptions(),
                                         debugMode,
@@ -448,10 +448,10 @@ export default class SnoopBot {
 
                     // Every 1 hour, delete half of the entries of `this.messages` object
                     cron.schedule("0 * * * *", () => {
-                        let entries = Object.entries(this.messages)
-                        let half = Math.floor(entries.length / 2)
+                        const entries = Object.entries(this.messages)
+                        const half = Math.floor(entries.length / 2)
 
-                        let remaining = Object.fromEntries(entries.slice(0, half))
+                        const remaining = Object.fromEntries(entries.slice(0, half))
                         this.messages = remaining
                     })
                 })

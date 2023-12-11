@@ -13,38 +13,38 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
     }
 
     public async onEvent(event: FCAMainEvent, api: FCAMainAPI) {
-        let messageID = event.messageID!;
-        let threadID = event.threadID;
-        let senderID = event.senderID!;
-        let messages = event.messages;
+        const messageID = event.messageID!;
+        const threadID = event.threadID;
+        const senderID = event.senderID!;
+        const messages = event.messages;
 
         // Ignore threads that are not whitelisted
-        let threadWhitelist = ThreadWhitelist.getThreadWhitelist()
+        const threadWhitelist = ThreadWhitelist.getThreadWhitelist()
         if(!threadWhitelist.threads.includes(threadID))
             return
 
         // Ignore if antiUnsend is disabled in this thread
-        let settingsList = Settings.getSettings()
-        let threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
+        const settingsList = Settings.getSettings()
+        const threadSettings = settingsList.threads[event.threadID] || settingsList.defaultSettings
         if(!threadSettings.antiUnsendEnabled)
             return
 
-        let deletedMessages = messages[messageID];
+        const deletedMessages = messages[messageID];
 
         // User unsent a normal message (meaning no attachments)
         if(deletedMessages.normal) {
-            let userInfo = await api.getUserInfo(senderID);
+            const userInfo = await api.getUserInfo(senderID);
 
-            let mentions = [];
-            for(let id in deletedMessages.mentions) {
+            const mentions = [];
+            for(const id in deletedMessages.mentions) {
                 mentions.push({
                     id,
                     tag: deletedMessages.mentions[id]
                 });
             }
 
-            let user = userInfo[senderID];
-            let message = {
+            const user = userInfo[senderID];
+            const message = {
                 body: `👀 @${user.firstName} unsent this message:\n\n${deletedMessages.message}`,
                 mentions: [
                     ...mentions,
@@ -64,23 +64,23 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
             let shareDetected = false;
 
             // Loop through all the stored messages
-            for(let deletedMessage of deletedMessages) {
+            for(const deletedMessage of deletedMessages) {
                 // If the message is a type of 'sticker'
                 if(deletedMessage.type === 'sticker') {
                     shareDetected = true;
 
-                    let userInfo = await api.getUserInfo(senderID);
+                    const userInfo = await api.getUserInfo(senderID);
 
-                    let mentions = [];
-                    for(let id in deletedMessage.mentions) {
+                    const mentions = [];
+                    for(const id in deletedMessage.mentions) {
                         mentions.push({
                             id,
                             tag: deletedMessage.mentions[id]
                         })
                     }
 
-                    let user = userInfo[senderID];
-                    let message = {
+                    const user = userInfo[senderID];
+                    const message = {
                         body: `👀 @${user.firstName} unsent this sticker: \n\n${deletedMessage.message || ''}`,
                         mentions: [
                             ...mentions,
@@ -101,11 +101,11 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
 
                     // If the deleted message is a live location
                     if(deletedMessage.source === null) {
-                        let userInfo = await api.getUserInfo(deletedMessage.target.sender.id);
-                        let user = userInfo[senderID];
-                        let latitude = deletedMessage.target.coordinate.latitude;
-                        let longitude = deletedMessage.target.coordinate.longitude;
-                        let message = {
+                        const userInfo = await api.getUserInfo(deletedMessage.target.sender.id);
+                        const user = userInfo[senderID];
+                        const latitude = deletedMessage.target.coordinate.latitude;
+                        const longitude = deletedMessage.target.coordinate.longitude;
+                        const message = {
                             body: `👀 @${user.firstName} unsent this live location: \n\n${deletedMessage.message || ''}`,
                             mentions: [{
                                 tag: `@${user.firstName}`,
@@ -123,18 +123,18 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
                     }
 
                     // For deleted messages with urls
-                    let userInfo = await api.getUserInfo(senderID);
-                    let mentions = [];
+                    const userInfo = await api.getUserInfo(senderID);
+                    const mentions = [];
 
-                    for(let id in deletedMessage.mentions) {
+                    for(const id in deletedMessage.mentions) {
                         mentions.push({
                             id,
                             tag: deletedMessage.mentions[id]
                         });
                     }
 
-                    let user = userInfo[senderID];
-                    let message = {
+                    const user = userInfo[senderID];
+                    const message = {
                         body: `👀 @${user.firstName} unsent this message:\n\n${deletedMessage.message}`,
                         mentions: [
                             ...mentions,
@@ -152,13 +152,13 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
 
                 // For deleted normal shared location
                 if(deletedMessage.type === 'location') {
-                    let longitude = deletedMessage.longitude;
-                    let latitude = deletedMessage.latitude;
+                    const longitude = deletedMessage.longitude;
+                    const latitude = deletedMessage.latitude;
                     shareDetected = true;
 
-                    let userInfo = await api.getUserInfo(senderID);
-                    let user = userInfo[senderID];
-                    let message = {
+                    const userInfo = await api.getUserInfo(senderID);
+                    const user = userInfo[senderID];
+                    const message = {
                         body: `👀 @${user.firstName} unsent this location: \n\n${deletedMessage.message || ''}`,
                         mentions: [{
                             tag: `@${user.firstName}`,
@@ -184,12 +184,12 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
 
             // Everything below here will be for messages
             // that have attachments such as photo, video, file
-            let mentions = [];
-            let streams = [];
+            const mentions = [];
+            const streams = [];
 
-            for(let deletedMessage of deletedMessages) {
-                let url = deletedMessage.type !== 'photo' ? deletedMessage.url : deletedMessage.largePreviewUrl;
-                let downloadResult = await Downloader.downloadFile(url, false);
+            for(const deletedMessage of deletedMessages) {
+                const url = deletedMessage.type !== 'photo' ? deletedMessage.url : deletedMessage.largePreviewUrl;
+                const downloadResult = await Downloader.downloadFile(url, false);
 
                 if(downloadResult.hasError) {
                     Logger.error(`Downloading attachment failed, reason: ${downloadResult.message}`);
@@ -198,7 +198,7 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
 
                 streams.push(downloadResult.results![0]);
 
-                for(let id in deletedMessage.mentions) {
+                for(const id in deletedMessage.mentions) {
                     mentions.push({
                         id,
                         tag: deletedMessage.mentions[id]
@@ -206,9 +206,9 @@ export default class MemberUnsendEvent extends SnoopBotEvent {
                 }
             }
 
-            let userInfo = await api.getUserInfo(senderID);
-            let user = userInfo[senderID];
-            let message = {
+            const userInfo = await api.getUserInfo(senderID);
+            const user = userInfo[senderID];
+            const message = {
                 body: `👀@${user.firstName} unsent these attachments: \n\n${deletedMessages[0].message || ''}`,
                 mentions: [
                     ...mentions,

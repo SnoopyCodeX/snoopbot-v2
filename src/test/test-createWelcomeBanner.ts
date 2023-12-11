@@ -7,32 +7,32 @@ import axios from "axios"
 
 (async () => {
     dotenv.config()
-    let outputImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_banner-test.png`
-    let profileImage = `${process.cwd()}/src/snoopbot/lib/images/profile-pic-downloaded.png`
-    let profileCircleCropped = `${process.cwd()}/src/snoopbot/lib/images/profile-cropped-circle.png`
-    let overlayImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_bg.jpg`
-    let circleSize = 200
+    const outputImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_banner-test.png`
+    const profileImage = `${process.cwd()}/src/snoopbot/lib/images/profile-pic-downloaded.png`
+    const profileCircleCropped = `${process.cwd()}/src/snoopbot/lib/images/profile-cropped-circle.png`
+    const overlayImage = `${process.cwd()}/src/snoopbot/lib/images/greetings_bg.jpg`
+    const circleSize = 200
 
-    let welcomeMessage = "Welcome to Programmers IT/CS/IS"
-    let memberMessage = "You are the 110th member of CodeSync PH"
+    const welcomeMessage = "Welcome to Programmers IT/CS/IS"
+    const memberMessage = "You are the 110th member of CodeSync PH"
 
-    let curl = `https://graph.facebook.com/100087000531483/picture?width=720&height=720&access_token=${process.env.FB_ACCESS_TOKEN}`
-    let axiosR = await axios.get(curl)
+    const curl = `https://graph.facebook.com/100087000531483/picture?width=720&height=720&access_token=${process.env.FB_ACCESS_TOKEN}`
+    const axiosR = await axios.get(curl)
 
     console.log(axiosR)
 
     // Download profile image
     Logger.muted('Downloading profile...')
     // let downloadProfileResult = await Downloader.downloadFile('https://scontent.fcgy2-2.fna.fbcdn.net/v/t39.30808-6/393721112_977252046678454_4664905812076049398_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFBTzBUBqRN2QgxRX1NBcgULkmxwbtQinIuSbHBu1CKcq_9PwNH_e5gl5oqmtLTduJo0mzEOmRtHUQucdx7zbrS&_nc_ohc=3RecootO9ZsAX_QelZx&_nc_ht=scontent.fcgy2-2.fna&oh=00_AfBmF67Sk5e6UZicNx1YRCG6z8TiR3GfAr6ExQc9v0W2Uw&oe=65656EFE')
-    let downloadProfileResult = await Downloader.downloadFile(curl)
+    const downloadProfileResult = await Downloader.downloadFile(curl)
     
     if(downloadProfileResult.hasError) {
         return Logger.error(downloadProfileResult.message!)
     }
     
     Logger.success('Profile image downloaded successfully!')
-    let profileReadableStreamImage: Readable = downloadProfileResult.results![0]
-    let profileWritableStreamImage = createWriteStream(profileImage)
+    const profileReadableStreamImage: Readable = downloadProfileResult.results![0]
+    const profileWritableStreamImage = createWriteStream(profileImage)
 
     profileReadableStreamImage.pipe(profileWritableStreamImage)
     profileWritableStreamImage.on("finish", async () => {

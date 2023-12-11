@@ -49,10 +49,10 @@ const createCommand = async (name: string) => {
     if(!className.endsWith('Command'))
         className += 'Command'
 
-    let commandsDir = `${process.cwd()}/src/commands`
-    let newCommandsFile = `${commandsDir}/${name}.ts`
-    let templateCommandFile = `${process.cwd()}/src/snoopbot/cli/templates/snoopbot-command.template.ts`
-    let exportCommandFile = `${commandsDir}/index.ts`
+    const commandsDir = `${process.cwd()}/src/commands`
+    const newCommandsFile = `${commandsDir}/${name}.ts`
+    const templateCommandFile = `${process.cwd()}/src/snoopbot/cli/templates/snoopbot-command.template.ts`
+    const exportCommandFile = `${commandsDir}/index.ts`
 
     if(!existsSync(commandsDir))
         await mkdir(commandsDir, { recursive: true });
@@ -65,7 +65,7 @@ const createCommand = async (name: string) => {
     let templateCommandCode = readFileSync(templateCommandFile).toString('utf-8')
     templateCommandCode = templateCommandCode
         .replace('<NAME>', className)
-        .replace(/(\<options\-NAME\>)/g, name)
+        .replace(/(<options-NAME>)/g, name)
 
     if(!existsSync(exportCommandFile))
         new File([""], exportCommandFile, {type: "application/typescript"});
@@ -89,10 +89,10 @@ const createEvent = async (name: string) => {
     if(!className.endsWith('Event'))
         className += 'Event'
 
-    let eventsDir = `${process.cwd()}/src/events`
-    let newEventFile = `${eventsDir}/${name.toLowerCase()}.ts`
-    let templateEventFile = `${process.cwd()}/src/snoopbot/cli/templates/snoopbot-event.template.ts`
-    let exportEventFile =   `${eventsDir}/index.ts`
+    const eventsDir = `${process.cwd()}/src/events`
+    const newEventFile = `${eventsDir}/${name.toLowerCase()}.ts`
+    const templateEventFile = `${process.cwd()}/src/snoopbot/cli/templates/snoopbot-event.template.ts`
+    const exportEventFile =   `${eventsDir}/index.ts`
 
     if(!existsSync(eventsDir))
         await mkdir(eventsDir, { recursive: true });
@@ -127,10 +127,10 @@ const createMiddleware = async (name: string) => {
     if(!className.endsWith('Middleware'))
         className += 'Middleware'
 
-    let middlewaresDir = `${process.cwd()}/src/middlewares`
-    let newMiddlewareFile = `${middlewaresDir}/${name.toLowerCase()}.ts`
-    let templateMiddlewareFile = `${process.cwd()}/src/snoopbot/cli/templates/snoopbot-middleware.template.ts`
-    let exportMiddlewareFile =   `${middlewaresDir}/index.ts`
+    const middlewaresDir = `${process.cwd()}/src/middlewares`
+    const newMiddlewareFile = `${middlewaresDir}/${name.toLowerCase()}.ts`
+    const templateMiddlewareFile = `${process.cwd()}/src/snoopbot/cli/templates/snoopbot-middleware.template.ts`
+    const exportMiddlewareFile =   `${middlewaresDir}/index.ts`
 
     if(!existsSync(middlewaresDir))
         await mkdir(middlewaresDir, { recursive: true });
@@ -161,8 +161,8 @@ program
     .addOption(new Option('-a, --action <ACTION>', 'The action you want to do').choices(['create:command', 'create:event', 'create:middleware'] as const))
     .addOption(new Option('-n, --name <NAME>', 'The name of the file'))
     .action((options) => {
-        let action = options.action!
-        let name = options.name!
+        const action = options.action!
+        const name = options.name!
 
         switch(action) {
             case "create:command":

@@ -41,7 +41,7 @@ export default class Crypt {
             return 'failed'
         }
 
-        let cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY, {
+        const cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY, {
             encoding: 'base64',
             pbkdf2Iterations: 10000,
             saltLength: 10
@@ -56,7 +56,7 @@ export default class Crypt {
             return 'failed'
         }
 
-        let cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY, {
+        const cryptr = new Cryptr(process.env.CRYPT_SECRET_KEY, {
             encoding: 'base64',
             pbkdf2Iterations: 10000,
             saltLength: 10
