@@ -67,7 +67,8 @@ IS_LOCAL=true
 CRYPT_SECRET_KEY='mysupersecretkey'
 ```
 
-⚠️ **Only use <ins>dummy facebook account</ins> for this bot, I will not be responsible for when facebook marks your account as spam or bans your account** ⚠️
+> [!WARNING]
+> Only use <ins>dummy facebook account</ins> for this bot, I will not be responsible for when facebook marks your account as spam or bans your account
 
 Then find and delete the existing <kbd><samp>state.session</samp></kbd> file in the root directory of the project so that SnoopBot will create a new one for you
 based on your facebook account credentials.
@@ -108,7 +109,8 @@ The `bot.init()` function takes in `SnoopBotOptions` object and these are the fo
 
 ## SnoopBot CLI Tool
 
-SnoopBot CLI Tool is snoopbot's built-in helper command-line tool for easier creation of new command, event handler  and middleware.
+> [!NOTE]
+> SnoopBot CLI Tool is snoopbot's built-in helper command-line tool for easier creation of new command, event handler  and middleware.
 
 ```bash
 snoopbot cli -a <action> -n <name>
@@ -186,7 +188,8 @@ And here are the following options that you may define in your command's constru
 | `prefix` | `string` | The prefix to be used for this command. The default is `/`. |
 | `hasArgs` | `boolean` | Set this to `true` if your command accepts arguments. |
 
-By the default, the prefix for every commands is <kbd><samp>/</samp></kbd>.
+> [!IMPORTANT]
+> By the default, the prefix for every commands is <kbd><samp>/</samp></kbd>.
 
 ## Creating new event handler
 
@@ -255,7 +258,8 @@ public getEventType() : SnoopBotEventType {
 
 Refer to the table above for the types of event that you may bind your event handler to.
 
-> ⚠️ Note: You may bind **<ins>MULTIPLE EVENT HANDLERS</ins>** to **<ins>ONE TYPE OF EVENT</ins>**.
+> [!TIP]
+> You may bind **<ins>MULTIPLE EVENT HANDLERS</ins>** to **<ins>ONE TYPE OF EVENT</ins>**.
 
 ## Creating new middleware
 
